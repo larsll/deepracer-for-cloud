@@ -11,9 +11,17 @@ services:
     ports:
       - "9000:9000"
     container_name: minio
-    command: server /data
+    command: gateway azure
+    restart: unless-stopped
+    env_file: .env
+  minio-log:
+    image: minio/minio
+    ports:
+      - "9001:9001"
+    container_name: minio-log
+    command: server --address :9001 /data
     volumes:
-      - ./volumes/minio:/data
+      - /mnt/deepracer/robo/checkpoint:/data
     restart: unless-stopped
     env_file: .env
   rl_coach:
@@ -24,15 +32,16 @@ services:
     - '//var/run/docker.sock:/var/run/docker.sock'
     - '../deepracer/sagemaker-python-sdk:/deepracer/sagemaker-python-sdk'
     - '../deepracer/rl_coach:/deepracer/rl_coach'
-    - '/robo/container:/robo/container'
+    - '/mnt/deepracer/robo/container:/robo/container'
     depends_on:
     - minio
   robomaker:
-    image: crr0004/deepracer_robomaker:console
+    image: larsll/deepracer_robomaker:latest
     command: ["${ROBOMAKER_COMMAND}"]
     volumes:
       - ../deepracer/simulation/aws-robomaker-sample-application-deepracer/simulation_ws/src:/app/robomaker-deepracer/simulation_ws/src
-      - ./volumes/robo/checkpoint:/root/.ros/
+      - /mnt/deepracer/robo/checkpoint:/root/.ros/
+      - /mnt/recording:/mnt/recording
     ports:
       - "8080:5900"
     container_name: robomaker
