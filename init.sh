@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
 # create directory structure for docker volumes
-mkdir -p docker/volumes/minio/bucket/custom_files \
-		 docker/volumes/robo/checkpoint
+sudo mkdir -p /mnt/deepracer
+sudo chown -R $(id -u):$(id -g) /mnt/deepracer
+
+mkdir -p /mnt/deepracer/robo/checkpoint
 
 # create symlink to current user's home .aws directory 
 # NOTE: AWS cli must be installed for this to work
@@ -25,9 +27,6 @@ cat overrides/rl_deepracer_coach_robomaker.py > rl_deepracer_coach_robomaker.py
 
 # build rl-coach image with latest code from crr0004's repo
 docker build -f ./docker/dockerfiles/rl_coach/Dockerfile -t aschu/rl_coach deepracer/
-
-# copy reward function and model-metadata files to bucket 
-cp deepracer/custom_files/* docker/volumes/minio/bucket/custom_files/
 
 # create the network sagemaker-local if it doesn't exit
 SAGEMAKER_NW='sagemaker-local'

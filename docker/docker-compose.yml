@@ -13,7 +13,11 @@ services:
     container_name: minio
     command: gateway azure
     restart: unless-stopped
-    env_file: .env
+    environment:
+      - MINIO_ACCESS_KEY
+      - MINIO_SECRET_KEY
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
   minio-log:
     image: minio/minio
     ports:
@@ -23,9 +27,14 @@ services:
     volumes:
       - /mnt/deepracer/robo/checkpoint:/data
     restart: unless-stopped
-    env_file: .env
+    environment:
+      - MINIO_ACCESS_KEY
+      - MINIO_SECRET_KEY
   rl_coach:
     image: aschu/rl_coach
+    environment:
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
     env_file: .env
     container_name: rl_coach
     volumes:
@@ -46,6 +55,9 @@ services:
       - "8080:5900"
     container_name: robomaker
     restart: unless-stopped
+    environment:
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
     env_file: .env
     depends_on:
     - rl_coach
