@@ -20,7 +20,7 @@ ln -s ../../aws-deepracer-workshops/log-analysis  ./docker/volumes/log-analysis
 cp deepracer/simulation/aws-robomaker-sample-application-deepracer/simulation_ws/src/deepracer_simulation/routes/* docker/volumes/log-analysis/tracks/
 
 # copy rewardfunctions
-mkdir -p custom_files 
+mkdir -p custom_files analysis
 cp deepracer/custom_files/* custom_files/
 
 # setup symlink to rl-coach config file

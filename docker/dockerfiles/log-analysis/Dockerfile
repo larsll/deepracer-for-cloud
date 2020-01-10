@@ -11,7 +11,7 @@ RUN apt-get install software-properties-common libsm6 libxext6 libxrender-dev gi
 RUN pip3 install virtualenv
 RUN virtualenv /workspace/venv
 WORKDIR /workspace/venv
-RUN mkdir -p /workspace/venv/data /workspace/venv/logs
+RUN mkdir -p /workspace/venv/data /workspace/venv/logs /workspace/venv/workbook
 
 # Install common pip packages
 WORKDIR /workspace/venv
@@ -20,6 +20,6 @@ RUN ls -lrt
 RUN . /workspace/venv/bin/activate && pip install -r requirements.txt
 
 EXPOSE 8888
-VOLUME ["/workspace/venv/data", "/workspace/venv/logs", "/root/.aws"]
+VOLUME ["/workspace/venv/data", "/workspace/venv/logs", "/root/.aws", "/workspace/venv/workbook"]
 CMD . /workspace/venv/bin/activate && jupyter lab --ip=0.0.0.0 --port=8888 --allow-root
 
