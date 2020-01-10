@@ -2,6 +2,6 @@
 aws-deepracer-workshops/
 
 deepracer/
-
+custom_files/
 docker/volumes/
 rl_deepracer_coach_robomaker.py

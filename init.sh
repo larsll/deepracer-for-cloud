@@ -18,6 +18,10 @@ git clone https://github.com/breadcentric/aws-deepracer-workshops.git && cd aws-
 
 ln -s ../../aws-deepracer-workshops/log-analysis  ./docker/volumes/log-analysis
 
+# copy rewardfunctions
+mkdir -p custom_files
+cp deepracer/custom_files/* custom_files/
+
 # setup symlink to rl-coach config file
 ln -s deepracer/rl_coach/rl_deepracer_coach_robomaker.py rl_deepracer_coach_robomaker.py
 
