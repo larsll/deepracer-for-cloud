@@ -1,6 +1,6 @@
-FROM nvcr.io/nvidia/tensorflow:19.06-py2
+FROM tensorflow/tensorflow:latest-gpu
 
-LABEL maintainer="alex.c.schultz@gmail.com" \
+LABEL maintainer="lars@ludvig.no" \
 	  description="Log Analysis for DeepRacer Training Run" \
 	  version=1.0
 
@@ -9,7 +9,7 @@ RUN apt-get update
 RUN apt-get upgrade -y
 RUN apt-get install software-properties-common libsm6 libxext6 libxrender-dev git wget python3-pip -y
 RUN pip3 install virtualenv
-RUN virtualenv venv
+RUN virtualenv /workspace/venv
 WORKDIR /workspace/venv
 RUN mkdir -p /workspace/venv/data /workspace/venv/logs
 

@@ -4,3 +4,4 @@ aws-deepracer-workshops/
 deepracer/
 
 docker/volumes/
+rl_deepracer_coach_robomaker.py
