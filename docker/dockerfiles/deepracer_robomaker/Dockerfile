@@ -1,3 +1,4 @@
+
 FROM crr0004/deepracer_robomaker:console
 LABEL maintainer "Lars Ludvigsen <lars@ludvig.no>"
 
@@ -13,17 +14,20 @@ ca-certificates apt-transport-https gnupg-curl && \
     apt-get purge --auto-remove -y gnupg-curl && \
 rm -rf /var/lib/apt/lists/*
 
-ENV CUDA_VERSION 10.2.89
-ENV CUDA_PKG_VERSION 10-2=$CUDA_VERSION-1
+ENV CUDA_VERSION 9.0.176
+ENV CUDNN_VERSION 7.6.4.38
+ENV CUDA_PKG_VERSION 9-0=$CUDA_VERSION-1
 
 # For libraries in the cuda-compat-* package: https://docs.nvidia.com/cuda/eula/index.html#attachment-a
 RUN apt-get update && apt-get install -y --no-install-recommends \
         cuda-cudart-$CUDA_PKG_VERSION \
-cuda-compat-10-2 && \
-ln -s cuda-10.2 /usr/local/cuda && \
-    rm -rf /var/lib/apt/lists/*
+	&& ln -s cuda-9.0 /usr/local/cuda 
 
 # Required for nvidia-docker v1
+LABEL com.nvidia.volumes.needed="nvidia_driver"
+LABEL com.nvidia.cuda.version="${CUDA_VERSION}"
+LABEL com.nvidia.cudnn.version="${CUDNN_VERSION}"
+
 RUN echo "/usr/local/nvidia/lib" >> /etc/ld.so.conf.d/nvidia.conf && \
     echo "/usr/local/nvidia/lib64" >> /etc/ld.so.conf.d/nvidia.conf
 
@@ -32,5 +36,25 @@ ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64
 
 # nvidia-container-runtime
 ENV NVIDIA_VISIBLE_DEVICES all
-ENV NVIDIA_DRIVER_CAPABILITIES all
-ENV NVIDIA_REQUIRE_CUDA "cuda>=10.2 brand=tesla,driver>=384,driver<385 brand=tesla,driver>=396,driver<397 brand=tesla,driver>=410,driver<411 brand=tesla,driver>=418,driver<419"
+ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
+ENV NVIDIA_REQUIRE_CUDA "cuda>=9.0 "
+
+ENV NCCL_VERSION 2.4.8
+
+RUN apt-get install -y --no-install-recommends \
+    cuda-libraries-$CUDA_PKG_VERSION \
+    cuda-cublas-9-0=9.0.176.4-1 \
+    cuda-cusolver-$CUDA_PKG_VERSION \
+    libnccl2=$NCCL_VERSION-1+cuda9.0 && \
+    apt-mark hold libnccl2 
+
+RUN apt-get install -y --no-install-recommends \
+    libcudnn7=$CUDNN_VERSION-1+cuda9.0 && \
+    apt-mark hold libcudnn7 && \
+    rm -rf /var/lib/apt/lists/*
+
+
+ENV PATH /usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
+ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64:/usr/local/cuda-9.0/targets/x86_64-linux/lib
+
+RUN pip install tensorflow-gpu==1.11.0
