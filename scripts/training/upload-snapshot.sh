@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-S3_BUCKET="aws-deepracer-3d436598-b73e-4102-8380-bbd84ec182a8"
+S3_BUCKET="X"
 
-S3_PREFIX="DeepRacer-SageMaker-RoboMaker-comm-180406016328-20200105200320-8c2ec57d-5e42-4940-8513-218d8c5330f4"
+S3_PREFIX="X"
 
 WORK_DIR=/mnt/deepracer
 MODEL_DIR=${WORK_DIR}/rl-deepracer-sagemaker/model/
