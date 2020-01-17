@@ -22,14 +22,15 @@ cp deepracer/simulation/aws-robomaker-sample-application-deepracer/simulation_ws
 # copy rewardfunctions
 mkdir -p custom_files analysis
 cp deepracer/custom_files/* custom_files/
-cp overrides/hyperparameters.json custom_files/
+cp defaults/hyperparameters.json custom_files/
 
 # setup symlink to rl-coach config file
 ln -s deepracer/rl_coach/rl_deepracer_coach_robomaker.py rl_deepracer_coach_robomaker.py
 
 # replace the contents of the rl_deepracer_coach_robomaker.py file with the gpu specific version (this is also where you can edit the hyperparameters)
 # TODO this file should be genrated from a gui before running training
-cat overrides/rl_deepracer_coach_robomaker.py > rl_deepracer_coach_robomaker.py 
+cat defaults/rl_deepracer_coach_robomaker.py > rl_deepracer_coach_robomaker.py 
+cp defaults/template-run-env.sh current-run-env.sh
 
 # build rl-coach image with latest code from crr0004's repo
 docker build -f ./docker/dockerfiles/rl_coach/Dockerfile -t aschu/rl_coach deepracer/

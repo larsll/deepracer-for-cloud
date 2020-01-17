@@ -1,0 +1,10 @@
+export AZ_ACCESS_KEY_ID=mystorageaccount
+export AZ_SECRET_ACCESS_KEY=mystorageaccountkey
+export WORLD_NAME=Vegas_track
+export CHANGE_START_POSITION=True
+export PRETRAINED=True
+export PRETRAINED_S3_PREFIX=rl-sagemaker-pretrained
+export PRETRAINED_S3_BUCKET=bucket
+export UPLOAD_S3_BUCKET="aws-deepracer-mybucketidinreal"
+export UPLOAD_S3_PREFIX="DeepRacer-SageMaker-RoboMaker-comm-prefix"
+export UPLOAD_MODEL_NAME="mymodelname"

@@ -1,13 +1,13 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
-S3_BUCKET="aws-deepracer-3d436598-b73e-4102-8380-bbd84ec182a8"
-
-S3_PREFIX="DeepRacer-SageMaker-RoboMaker-comm-180406016328-20200105200320-8c2ec57d-5e42-4940-8513-218d8c5330f4"
+S3_BUCKET=${UPLOAD_S3_BUCKET}
+S3_PREFIX=${UPLOAD_S3_PREFIX}
 
 WORK_DIR=/mnt/deepracer
 MODEL_DIR=${WORK_DIR}/rl-deepracer-sagemaker/model/
-MODEL_REWARD=$(pwd)/../../docker/volumes/minio/bucket/custom_files/reward.py
-MODEL_NAME="Local-Summit-4"
+MODEL_REWARD=$(pwd)/../../custom_files/reward.py
+MODEL_HYPER=$(pwd)/../../custom_files/hyperparameters.json
+MODEL_NAME=$UPLOAD_MODEL_NAME
 
 display_usage() { 
     echo -e "\nUsage:\n./upload-snapshot.sh -c checkpoint \n"
@@ -50,7 +50,8 @@ else
   echo "Checkpoint supplied: ["${CHECKPOINT}"]"
 fi
 
-mkdir -p $WORK_DIR/checkpoint
+mkdir -p $WORK_DIR/tmp_upload && rm -rf $WORK_DIR/tmp_upload/*
+
 MODEL_FILE=$MODEL_DIR"model_"$CHECKPOINT".pb"
 METADATA_FILE=$MODEL_DIR"model_metadata.json"
 
@@ -59,19 +60,19 @@ if test ! -f "$MODEL_FILE"; then
     echo "$MODEL_FILE doesn't exist"
     return 1
 else
-  cp $MODEL_FILE $WORK_DIR/checkpoint/  
+  cp $MODEL_FILE $WORK_DIR/tmp_upload/  
 fi
 
 if test ! -f "$METADATA_FILE"; then
     echo "$METADATA_FILE doesn't exist"
     return 1
 else
-  cp $METADATA_FILE $WORK_DIR/checkpoint/  
+  cp $METADATA_FILE $WORK_DIR/tmp_upload/  
 fi
 
 
 for i in $( find $MODEL_DIR -type f -name $CHECKPOINT"*" ); do
-    cp $i $WORK_DIR/checkpoint/  
+    cp $i $WORK_DIR/tmp_upload/  
 done
 
 ls ${MODEL_DIR}${CHECKPOINT}_Step-*.ckpt.index | xargs -n 1 basename | sed 's/[.][^ ]*//'
@@ -79,20 +80,19 @@ ls ${MODEL_DIR}${CHECKPOINT}_Step-*.ckpt.index | xargs -n 1 basename | sed 's/[.
 CONTENT=$(ls ${MODEL_DIR}${CHECKPOINT}_Step-*.ckpt.index | xargs -n 1 basename | sed 's/[.][^ ]*//')
 echo ${CONTENT}
 
-echo 'model_checkpoint_path: "'${CONTENT}'.ckpt"' > $WORK_DIR/checkpoint/checkpoint
+echo 'model_checkpoint_path: "'${CONTENT}'.ckpt"' > $WORK_DIR/tmp_upload/checkpoint
 
 # # upload files to s3
-for filename in $WORK_DIR/checkpoint/*; do
+for filename in $WORK_DIR/tmp_upload/*; do
     aws s3 cp $filename s3://$S3_BUCKET/$S3_PREFIX/model/
 done
-
-tar -czvf $WORK_DIR/$MODEL_NAME-${CHECKPOINT}-checkpoint.tar.gz $WORK_DIR/checkpoint/*
+aws s3 cp $MODEL_HYPER s3://$S3_BUCKET/$S3_PREFIX/ip/
+# tar -czvf $WORK_DIR/$MODEL_NAME-${CHECKPOINT}-checkpoint.tar.gz $WORK_DIR/checkpoint/*
 
 # # upload meta-data
 aws s3 cp $METADATA_FILE s3://$S3_BUCKET/model-metadata/$MODEL_NAME/
 aws s3 cp $MODEL_REWARD s3://$S3_BUCKET/reward-functions/$MODEL_NAME/reward_function.py
 
-rm -rf checkpoint
 echo 'done uploading model!'
 
 

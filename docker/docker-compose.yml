@@ -14,10 +14,10 @@ services:
     command: gateway azure
     restart: unless-stopped
     environment:
-      - MINIO_ACCESS_KEY
-      - MINIO_SECRET_KEY
-      - AWS_ACCESS_KEY_ID
-      - AWS_SECRET_ACCESS_KEY
+      - MINIO_ACCESS_KEY=${AZ_ACCESS_KEY_ID}
+      - MINIO_SECRET_KEY=${AZ_SECRET_ACCESS_KEY}
+      - AWS_ACCESS_KEY_ID=${AZ_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AZ_SECRET_ACCESS_KEY}
   minio-log:
     image: minio/minio
     ports:
@@ -28,13 +28,17 @@ services:
       - /mnt/deepracer/robo/checkpoint:/data
     restart: unless-stopped
     environment:
-      - MINIO_ACCESS_KEY
-      - MINIO_SECRET_KEY
+      - MINIO_ACCESS_KEY=${AZ_ACCESS_KEY_ID}
+      - MINIO_SECRET_KEY=${AZ_SECRET_ACCESS_KEY}
   rl_coach:
     image: aschu/rl_coach
     environment:
-      - AWS_ACCESS_KEY_ID
-      - AWS_SECRET_ACCESS_KEY
+      - WORLD_NAME
+      - PRETRAINED
+      - PRETRAINED_S3_PREFIX
+      - PRETRAINED_S3_BUCKET
+      - AWS_ACCESS_KEY_ID=${AZ_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AZ_SECRET_ACCESS_KEY}
     env_file: .env
     container_name: rl_coach
     volumes:
@@ -56,8 +60,10 @@ services:
     container_name: robomaker
     restart: unless-stopped
     environment:
-      - AWS_ACCESS_KEY_ID
-      - AWS_SECRET_ACCESS_KEY
+      - CHANGE_START_POSITION
+      - WORLD_NAME
+      - AWS_ACCESS_KEY_ID=${AZ_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AZ_SECRET_ACCESS_KEY}
     env_file: .env
     depends_on:
     - rl_coach
