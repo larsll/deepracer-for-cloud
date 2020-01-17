@@ -22,6 +22,7 @@ cp deepracer/simulation/aws-robomaker-sample-application-deepracer/simulation_ws
 # copy rewardfunctions
 mkdir -p custom_files analysis
 cp deepracer/custom_files/* custom_files/
+cp overrides/hyperparameters.json custom_files/
 
 # setup symlink to rl-coach config file
 ln -s deepracer/rl_coach/rl_deepracer_coach_robomaker.py rl_deepracer_coach_robomaker.py
