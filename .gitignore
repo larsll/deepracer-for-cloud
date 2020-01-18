@@ -4,4 +4,4 @@ analysis/
 docker/volumes/
 recording/
 recording
-current-run-env.sh
+current-run.env
