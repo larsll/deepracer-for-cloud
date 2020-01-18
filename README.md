@@ -1,5 +1,5 @@
 # DeepRacer-For-Azure
-Provides a quick and easy way to get up and running with a DeepRacer training environment in Azure, using the N-Series Virtual Machines.
+Provides a quick and easy way to get up and running with a DeepRacer training environment in Azure, using the [N-Series Virtual Machines](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/sizes-gpu).
 
 This repo is an extension of the work done by Alex (https://github.com/alexschultz/deepracer-for-dummies), which is again a wrapper around the amazing work done by Chris (https://github.com/crr0004/deepracer)
 
