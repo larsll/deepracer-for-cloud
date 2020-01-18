@@ -21,4 +21,4 @@ TODO: Create an end-to-end installation script.
 
 ## Usage
 
-Before every session run `activate.sh` to ensure that the environment variables are set correctly.
+Before every session run `source activate.sh` to ensure that the environment variables are set correctly.
