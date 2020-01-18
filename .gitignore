@@ -1,7 +1,4 @@
 .vscode/
-aws-deepracer-workshops/
-
-deepracer/
 custom_files/
 analysis/
 docker/volumes/

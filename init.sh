@@ -12,9 +12,11 @@ mkdir -p /mnt/deepracer/robo/checkpoint
 ln -s $(eval echo "~${USER}")/.aws  docker/volumes/
 
 # grab local training deepracer repo from crr0004 and log analysis repo from vreadcentric
-git clone --recurse-submodules https://github.com/crr0004/deepracer.git
 
-git clone https://github.com/breadcentric/aws-deepracer-workshops.git && cd aws-deepracer-workshops && git checkout enhance-log-analysis && cd ..
+# Now as submodules!
+# git clone --recurse-submodules https://github.com/crr0004/deepracer.git
+# git clone https://github.com/breadcentric/aws-deepracer-workshops.git && cd aws-deepracer-workshops && git checkout enhance-log-analysis && cd ..
+git submodules init && git submodules update
 
 ln -s ../../aws-deepracer-workshops/log-analysis  ./docker/volumes/log-analysis
 cp deepracer/simulation/aws-robomaker-sample-application-deepracer/simulation_ws/src/deepracer_simulation/routes/* docker/volumes/log-analysis/tracks/
