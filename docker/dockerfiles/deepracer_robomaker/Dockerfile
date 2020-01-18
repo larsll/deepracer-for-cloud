@@ -42,6 +42,7 @@ ENV NVIDIA_REQUIRE_CUDA "cuda>=9.0 "
 ENV NCCL_VERSION 2.4.8
 
 RUN apt-get install -y --no-install-recommends \
+    cuda-$CUDA_PKG_VERSION \
     cuda-libraries-$CUDA_PKG_VERSION \
     cuda-cublas-9-0=9.0.176.4-1 \
     cuda-cusolver-$CUDA_PKG_VERSION \
