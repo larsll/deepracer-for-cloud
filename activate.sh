@@ -1,5 +1,7 @@
 #!/bin/bash
-if [[ -f "~/current-run.env" ]]
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+if [[ -f "$DIR/current-run.env" ]]
 then
     export $(grep -v '^#' current-run.env | xargs)
 else
