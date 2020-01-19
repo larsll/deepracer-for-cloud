@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+cd $DIR
 
 # create directory structure for docker volumes
-sudo mkdir -p /mnt/deepracer
-sudo chown -R $(id -u):$(id -g) /mnt/deepracer
-
-mkdir -p /mnt/deepracer/robo/checkpoint 
-mkdir -p docker/volumes
+sudo mkdir -p /mnt/deepracer /mnt/deepracer/recording /mnt/deepracer/robo/checkpoint 
+sudo chown -R $(id -u):$(id -g) /mnt/deepracer 
+mkdir -p $DIR/docker/volumes
 
 # create symlink to current user's home .aws directory 
 # NOTE: AWS cli must be installed for this to work
 # https://docs.aws.amazon.com/cli/latest/userguide/install-linux-al2017.html
-ln -s $(eval echo "~${USER}")/.aws  docker/volumes/
+ln -s $(eval echo "~${USER}")/.aws  $DIR/docker/volumes/
 
 # grab local training deepracer repo from crr0004 and log analysis repo from vreadcentric
 # Now as submodules!
@@ -18,7 +18,7 @@ ln -s $(eval echo "~${USER}")/.aws  docker/volumes/
 # git clone https://github.com/breadcentric/aws-deepracer-workshops.git && cd aws-deepracer-workshops && git checkout enhance-log-analysis && cd ..
 git submodule init && git submodule update
 
-ln -s ../../aws-deepracer-workshops/log-analysis  ./docker/volumes/log-analysis
+ln -sf ./aws-deepracer-workshops/log-analysis  ./docker/volumes/log-analysis
 cp deepracer/simulation/aws-robomaker-sample-application-deepracer/simulation_ws/src/deepracer_simulation/routes/* docker/volumes/log-analysis/tracks/
 
 # copy rewardfunctions
@@ -36,7 +36,8 @@ cp defaults/template-run.env current-run.env
 
 # build rl-coach image with latest code from crr0004's repo
 docker build -f ./docker/dockerfiles/rl_coach/Dockerfile -t aschu/rl_coach deepracer/
-docker build -f ./docker/dockerfiles/deepracer_robomaker/Dockerfile -t larsll/deepracer_robomaker deepracer/
+docker build -f ./docker/dockerfiles/deepracer_robomaker/Dockerfile -t larsll/deepracer_robomaker
+docker build -f ./docker/dockerfiles/log-analysis/Dockerfile -t larsll/log-analysis
 docker pull crr0004/sagemaker-rl-tensorflow:nvidia
 
 # create the network sagemaker-local if it doesn't exit

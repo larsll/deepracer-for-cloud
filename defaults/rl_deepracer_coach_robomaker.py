@@ -18,7 +18,8 @@ from misc import get_execution_role, wait_for_s3_object
 from sagemaker.rl import RLEstimator, RLToolkit, RLFramework
 from markdown_helper import *
 
-
+def str2bool(v):
+  return v.lower() in ("yes", "true", "t", "1")
 
 # S3 bucket
 boto_session = boto3.session.Session(
@@ -34,7 +35,7 @@ sage_session = sagemaker.local.LocalSession(
     boto_session=boto_session, s3_client=s3Client)
 # sage_session.default_bucket()
 s3_bucket = os.environ.get("MODEL_S3_BUCKET", "bucket")
-pretrained = bool(os.environ.get("PRETRAINED", False))
+pretrained = str2bool(os.environ.get("PRETRAINED", False))
 s3_pretrained_bucket = os.environ.get("PRETRAINED_S3_BUCKET", "bucket")
 s3_pretrained_prefix = os.environ.get(
     "PRETRAINED_S3_PREFIX", "rl-deepracer-pretrained")
@@ -133,8 +134,9 @@ hyperparameter_data = io.BytesIO()
 s3Client_c.download_fileobj(
     s3_bucket, hyperparameter_file, hyperparameter_data)
 hyperparameters_nn = json.loads(hyperparameter_data.getvalue().decode("utf-8"))
-print(hyperparameters_nn)
-
+hyperparameters = {**hyperparameters_core, **hyperparameters_nn}
+print("Configured following hyperparameters")
+print(hyperparameters)
 estimator = RLEstimator(entry_point="training_worker.py",
                         source_dir='src',
                         dependencies=["common/sagemaker_rl"],
@@ -150,8 +152,7 @@ estimator = RLEstimator(entry_point="training_worker.py",
                         base_job_name=job_name_prefix,
                         image_name=image_name,
                         train_max_run=job_duration_in_seconds,  # Maximum runtime in seconds
-                        hyperparameters={
-                            **hyperparameters_core, **hyperparameters_nn},
+                        hyperparameters=hyperparameters,
                         metric_definitions=metric_definitions,
                         s3_client=s3Client
                         # subnets=default_subnets, # Required for VPC mode
