@@ -12,6 +12,7 @@ Main differences to the work done by Alex is:
 	* `custom_files/hyperparameters.json` stores the runtime hyperparameters, which logically belongs together with the model_metadata.json and rewards.py files.
 	* `current-run.env` contains user session configuration (pretraining, track etc.) as well as information about where to upload your model (S3 bucket and prefix).
 	* `docker/.env` remains the home for more static configuration. This is not expected to change between sessions.
+* Uses the Azure temporary drive on `/mnt` to store robomaker files (checkpoints, logs); these will be deleted between runs, but provides ~300GB of 'free' storage as long as the VM is running. Archiving of logs and additional checkpoint files required if desired.
 
 ## Installation
 
@@ -21,4 +22,6 @@ TODO: Create an end-to-end installation script.
 
 ## Usage
 
-Before every session run `source activate.sh` to ensure that the environment variables are set correctly.
+Before every session run `source activate.sh` to ensure that the environment variables are set correctly. This also creates a set of aliases/commands that makes it easier to operate the setup.
+
+Ensure that the configuration files are uploaded into the bucket `dr-upload-local-custom-files`. Start a training with `dr-start-local-training`.
