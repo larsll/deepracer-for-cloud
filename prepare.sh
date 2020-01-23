@@ -11,7 +11,7 @@ then
     echo -e "g\nn\np\n1\n\n\nw\n" | sudo fdisk /dev/$ADDL_DISK
     ADDL_DEVICE=$(echo "/dev/"$ADDL_DISK"1")
     sudo mkfs.ext4 $ADDL_DEVICE
-    mkdir -p /var/lib/docker
+    sudo mkdir -p /var/lib/docker
     echo "$ADDL_DEVICE   /var/lib/docker   auto    rw,user,auto    0    0" | sudo tee -a /etc/fstab
     mount /var/lib/docker
     if [ $? -ne 0 ]
