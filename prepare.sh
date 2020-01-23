@@ -8,7 +8,7 @@ ADDL_PART=$(lsblk -l | awk -v DISK="$ADDL_DISK" '($0 ~ DISK) && ($0 ~ /part/) {p
 if [ -n $ADDL_DISK ] && [ -z $ADDL_PART] 
 then
     echo "Found $ADDL_DISK, preparing it for use"
-    echo -e "g\nn\n\1\n\n\nw\n" | sudo fdisk /dev/$ADDL_DISK
+    echo -e "g\nn\np\n1\n\n\nw\n" | sudo fdisk /dev/$ADDL_DISK
     ADDL_DEVICE=$(echo "/dev/"$ADDL_DISK"1")
     sudo mkfs.ext4 $ADDL_DEVICE
     mkdir -p /var/lib/docker
@@ -30,7 +30,7 @@ fi
 sudo apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub
 sudo bash -c 'echo "deb http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64 /" > /etc/apt/sources.list.d/cuda.list'
 sudo bash -c 'echo "deb http://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64 /" > /etc/apt/sources.list.d/cuda_learn.list'
-sudo bash -c 'apt update && apt install -y nvidia-driver-440 nvidia-cuda-toolkit cuda libcudnn7 libcudnn7-dev -o Dpkg::Options::="--force-overwrite"'
+sudo bash -c 'apt update && apt install -y nvidia-driver-440 cuda-minimal-build -o Dpkg::Options::="--force-overwrite"'
 
 GPUS=$(nvidia-smi -L | awk  '/GPU .:/' | wc -l)
 if [ $GPU -eq 0 ]
