@@ -1,4 +1,11 @@
 #!/usr/bin/env bash
+GPUS=$(docker run --gpus all nvidia/cuda:10.2-base nvidia-smi "-L" | awk  '/GPU .:/' | wc -l)
+if [ $? -ne 0 ] || [ $GPUS -eq 0 ]
+then
+	echo "No GPU detected in docker. Please check setup".
+	exit 1
+fi
+
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 cd $DIR
 

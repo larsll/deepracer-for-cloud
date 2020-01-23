@@ -1,5 +1,13 @@
 #!/bin/bash
 
+## Do I have a GPU
+GPUS=$(lspci | awk '/NVIDIA/ && /3D controller/' | wc -l)
+if [ $? -ne 0 ] || [ $GPUS -eq 0 ]
+then
+        echo "No NVIDIA GPU detected. Exiting".
+        exit 1
+fi
+
 ## Do I have an additional disk?
 
 ADDL_DISK=$(lsblk | awk  '/^sdc/ {print $1}')
@@ -31,14 +39,7 @@ fi
 sudo apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub
 sudo bash -c 'echo "deb http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64 /" > /etc/apt/sources.list.d/cuda.list'
 sudo bash -c 'echo "deb http://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64 /" > /etc/apt/sources.list.d/cuda_learn.list'
-sudo bash -c 'apt update && apt install -y nvidia-driver-440 cuda-minimal-build -o Dpkg::Options::="--force-overwrite"'
-
-GPUS=$(nvidia-smi -L | awk  '/GPU .:/' | wc -l)
-if [ $GPU -eq 0 ]
-then
-    echo "Did not find a GPU. Exiting"
-    exit 1
-fi
+sudo bash -c 'apt update && apt install -y nvidia-driver-440 cuda-minimal-build-10-2 -o Dpkg::Options::="--force-overwrite"'
 
 ## Adding AWSCli and JQ
 sudo apt-get install -y awscli jq
@@ -63,17 +64,12 @@ jq 'del(."default-runtime") | {"runtimes": .runtimes, "default-runtime": "nvidia
 sudo systemctl enable docker
 sudo systemctl restart docker
 
-# Ensure user can run docker
+## Ensure user can run docker
 sudo usermod -a -G docker $(id -un)
-
-# Check installation
-GPUS=$(sudo docker run --gpus all nvidia/cuda:10.2-base nvidia-smi "-L" | awk  '/GPU .:/' | wc -l)
-if [ $GPU -eq 0 ]
-then
-    echo "Did not find a GPU in Docker. Exiting"
-    exit 1
-fi
 
 ## Installing Docker Compose
 sudo curl -L https://github.com/docker/compose/releases/download/1.25.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
+
+## Reboot to load driver
+sudo reboot
