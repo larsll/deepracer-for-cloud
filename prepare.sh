@@ -17,9 +17,10 @@ then
     if [ $? -ne 0 ]
     then
         echo "Error during preparing of additional disk. Exiting."
-        exit(1)
+        exit 1
     fi
 elif  [ -n $ADDL_DISK ] && [ -n $ADDL_PART] 
+then
     echo "Found $ADDL_DISK - $ADDL_PART already mounted, taking no action."
 
 else
@@ -36,7 +37,7 @@ GPUS=$(nvidia-smi -L | awk  '/GPU .:/' | wc -l)
 if [ $GPU -eq 0 ]
 then
     echo "Did not find a GPU. Exiting"
-    exit(1)
+    exit 1
 fi
 
 ## Adding AWSCli and JQ
@@ -70,7 +71,7 @@ GPUS=$(sudo docker run --gpus all nvidia/cuda:10.2-base nvidia-smi "-L" | awk  '
 if [ $GPU -eq 0 ]
 then
     echo "Did not find a GPU in Docker. Exiting"
-    exit(1)
+    exit 1
 fi
 
 ## Installing Docker Compose
