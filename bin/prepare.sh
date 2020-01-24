@@ -100,6 +100,6 @@ sudo chmod +x /usr/local/bin/docker-compose
 ## Reboot to load driver -- continue install
 echo "Rebooting in 5 seconds. Will continue with install."
 cd $DIR
-./runonce.sh init.sh
+./runonce.sh ./init.sh
 sleep 5s
 sudo reboot
