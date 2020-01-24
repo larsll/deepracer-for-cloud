@@ -19,6 +19,7 @@ if [ -n $ADDL_DISK ] && [ -z $ADDL_PART]
 then
     echo "Found $ADDL_DISK, preparing it for use"
     echo -e "g\nn\np\n1\n\n\nw\n" | sudo fdisk /dev/$ADDL_DISK
+    sleep 1s
     ADDL_DEVICE=$(echo "/dev/"$ADDL_DISK"1")
     sudo mkfs.ext4 $ADDL_DEVICE
     sudo mkdir -p /var/lib/docker
@@ -47,6 +48,7 @@ if [ -n $ADDL_DISK ] && [ -z $ADDL_PART]
 then
     echo "Found $ADDL_DISK, preparing it for use"
     echo -e "g\nn\np\n1\n\n\nw\n" | sudo fdisk /dev/$ADDL_DISK
+    sleep 1s
     ADDL_DEVICE=$(echo "/dev/"$ADDL_DISK"p1")
     sudo mkfs.ext4 $ADDL_DEVICE
     sudo mkdir -p /mnt
@@ -99,7 +101,7 @@ sudo usermod -a -G docker $(id -un)
 
 ## Installing Docker Compose
 sudo curl -L https://github.com/docker/compose/releases/download/1.25.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compos
+sudo chmod +x /usr/local/bin/docker-compose
 
 ## Reboot to load driver -- continue install
 cd $DIR
