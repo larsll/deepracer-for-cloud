@@ -31,7 +31,7 @@ if [ $(aws sts get-caller-identity | jq '.Arn' | awk /assumed-role/ | wc -l) -eq
 then
     export LOCAL_ACCESS_KEY_ID=$(aws --profile $LOCAL_S3_PROFILE configure get aws_access_key_id | xargs)
     export LOCAL_SECRET_ACCESS_KEY=$(aws --profile $LOCAL_S3_PROFILE configure get aws_secret_access_key | xargs)
-    COMPOSE_FILE="$COMPOSE_FILE:$DIR/docker/docker-compose-pass.yml"
+    COMPOSE_FILE="$COMPOSE_FILE:$DIR/docker/docker-compose-keys.yml"
 fi
 
 export COMPOSE_FILE
