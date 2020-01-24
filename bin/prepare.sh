@@ -3,7 +3,7 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 ## Patch system
-sudo apt-get update && sudo apt-get upgrade
+sudo apt-get update && sudo apt-get upgrade -y
 
 ## Do I have a GPU
 GPUS=$(lspci | awk '/NVIDIA/ && /3D controller/' | wc -l)

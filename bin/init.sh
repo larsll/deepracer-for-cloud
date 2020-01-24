@@ -41,7 +41,7 @@ ln -f $INSTALL_DIR/defaults/rl_deepracer_coach_robomaker.py $INSTALL_DIR/deeprac
 cd $INSTALL_DIR/deepracer/
 patch simulation/aws-robomaker-sample-application-deepracer/simulation_ws/src/sagemaker_rl_agent/markov/environments/deepracer_racetrack_env.py < ../defaults/deepracer_racetrack_env.py.patch 
 patch robomaker.env < ../defaults/robomaker.env.patch
-patch rlcoach/env.sh < ../defaults/rl_coach_env.sh.patch
+patch rl_coach/env.sh < ../defaults/rl_coach_env.sh.patch
 cd ..
 
 # replace the contents of the rl_deepracer_coach_robomaker.py file with the gpu specific version (this is also where you can edit the hyperparameters)
