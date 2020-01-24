@@ -47,6 +47,16 @@ function dr-upload-local-custom-files {
   aws $LOCAL_PROFILE_ENDPOINT_URL s3 sync custom_files/ $CUSTOM_TARGET
 }
 
+function dr-download-local-custom-files {
+  if [[ "${CLOUD,,}" == "azure" ]];
+  then
+	  ROBOMAKER_COMMAND="" docker-compose $COMPOSE_FILES up -d minio
+  fi
+  eval CUSTOM_TARGET=$(echo s3://$LOCAL_S3_BUCKET/$LOCAL_S3_CUSTOM_FILES_PREFIX/)
+  echo "Downloading files from $CUSTOM_TARGET"
+  aws $LOCAL_PROFILE_ENDPOINT_URL s3 sync $CUSTOM_TARGET custom_files/
+}
+
 function dr-start-local-training {
   bash -c "cd $DIR/scripts/training && ./start.sh"
 }
