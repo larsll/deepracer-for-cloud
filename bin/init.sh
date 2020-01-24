@@ -74,3 +74,6 @@ if [ $? -ne 0 ]
 then
 	  docker network create $SAGEMAKER_NW
 fi
+
+# ensure our variables are set on startup
+echo "source $INSTALL_DIR/activate.sh" >> $HOME/.profile

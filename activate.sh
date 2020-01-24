@@ -104,3 +104,15 @@ function dr-logs-loganalysis {
   fi
   
 }
+
+function dr-logs-proxy-start {
+   docker-compose -f $DIR/docker/docker-compose-log.yml up -d
+}
+
+function dr-logs-proxy-stop {
+   docker-compose -f $DIR/docker/docker-compose-log.yml down
+}
+
+function dr-update {
+   source $DIR/activate.sh
+}
