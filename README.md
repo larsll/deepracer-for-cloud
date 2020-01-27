@@ -23,7 +23,7 @@ Main differences to the work done by Alex is:
 
 Depending on your needs as well as specific needs of the cloud platform you can configure your VM to your liking.
 
-AWS:
+**AWS**:
 * EC2 instance of type G3, G4, P2 or P3 - recommendation is g4dn.2xlarge
 	* Ubuntu 18.04
 	* Minimum 30 GB, preferred 40 GB of OS disk.
@@ -32,7 +32,7 @@ AWS:
 	* Recommended at least 6 VCPUs
 * S3 bucket. Preferrably in same region as EC2 instance.
 
-Azure:
+**Azure**:
 * N-Series VM that comes with NVIDIA Graphics Adapter - recommendation is NC6_Standard
 	* Ubuntu 18.04
 	* Standard 30 GB OS drive is sufficient to get started. 
@@ -53,6 +53,8 @@ The package comes with preparation and setup scripts that would allow a turn-key
 This will prepare the VM by partitioning additional drives as well as installing all prerequisites. After a reboot it will continuee to run `./bin/init.sh` setting up the full repository and downloading the core Docker images. Depending on your environment this may take up to 30 minutes. The scripts will create a file `DONE` once completed.
 
 The installation script will adapt `.profile` to ensure that all settings are applied on login.
+
+*TODO: Document how to configure via cloud-init.*
 
 ## Environment Setup
 
