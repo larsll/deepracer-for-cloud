@@ -26,7 +26,8 @@ then
   TARGET_METADATA_FILE_S3_KEY="s3://${TARGET_S3_BUCKET}/"$(awk '/MODEL_METADATA_FILE_S3_KEY/ {print $2}' $PARAM_FILE | sed "s/^\([\"']\)\(.*\)\1\$/\2/g")
   TARGET_REWARD_FILE_S3_KEY="s3://${TARGET_S3_BUCKET}/"$(awk '/REWARD_FILE_S3_KEY/ {print $2}' $PARAM_FILE | sed "s/^\([\"']\)\(.*\)\1\$/\2/g")
   TARGET_METRICS_FILE_S3_KEY="s3://${TARGET_S3_BUCKET}/"$(awk '/METRICS_S3_OBJECT_KEY/ {print $2}' $PARAM_FILE | sed "s/^\([\"']\)\(.*\)\1\$/\2/g")
-
+  MODEL_NAME=$(awk '/MODEL_METADATA_FILE_S3_KEY/ {print $2}' $PARAM_FILE | awk '{split($0,a,"/"); print a[2] }')
+  echo "Preparing upload for model ${MODEL_NAME}."
 else
   echo "No DeepRacer information found in s3://${UPLOAD_S3_BUCKET}/${UPLOAD_S3_PREFIX}. Exiting"
   exit 1
@@ -40,7 +41,7 @@ METRICS_FILE=$(aws $LOCAL_PROFILE_ENDPOINT_URL s3 cp s3://${SOURCE_S3_BUCKET}/me
 
 if [ -n "$METADATA_FILE" ] && [ -n "$REWARD_FILE" ] && [ -n "$METRICS_FILE" ]; 
 then
-    echo "All source files found"
+    echo "All meta-data files found. Looking for checkpoint."
     # SOURCE_METADATA_FILE_S3_KEY="s3://${SOURCE_S3_BUCKET}/${SOURCE_S3_CONFIG}/reward.py"
     # SOURCE_REWARD_FILE="s3://${SOURCE_S3_BUCKET}/${SOURCE_S3_CONFIG}/model_metadata.json"
     # SOURCE_METRICS_FILE="s3://${SOURCE_S3_BUCKET}/${SOURCE_S3_CONFIG}/metrics/metric.json"
@@ -78,7 +79,7 @@ else
 fi
 
 # Upload files
-echo "Uploading files to s3://${TARGET_S3_BUCKET}/${TARGET_S3_PREFIX}/"
+echo "Uploading files for model ${MODEL_NAME} to s3://${TARGET_S3_BUCKET}/${TARGET_S3_PREFIX}/"
 aws s3 sync ${WORK_DIR}model/ s3://${TARGET_S3_BUCKET}/${TARGET_S3_PREFIX}/model/ 
 aws s3 cp ${REWARD_FILE} ${TARGET_REWARD_FILE_S3_KEY} 
 aws s3 cp ${METADATA_FILE} ${TARGET_METADATA_FILE_S3_KEY} 
