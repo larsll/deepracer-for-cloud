@@ -20,7 +20,7 @@ d) OPT_DRYRUN="--dryrun"
 ;;
 p) OPT_PREFIX="$OPTARG"
 ;;
-w) OPT_WIPE="True"
+w) OPT_WIPE="--delete"
 ;;
 h) usage
 ;;
@@ -127,8 +127,9 @@ then
     fi
 fi
 
-cd ${WORK_DIR}model/
-aws s3 sync ${WORK_DIR}model/ s3://${TARGET_S3_BUCKET}/${TARGET_S3_PREFIX}/model/ ${OPT_DRYRUN}
+touch ${WORK_DIR}model/.ready 
+cd ${WORK_DIR}
+aws s3 sync ${WORK_DIR}model/ s3://${TARGET_S3_BUCKET}/${TARGET_S3_PREFIX}/model/ ${OPT_DRYRUN} ${OPT_WIPE}
 aws s3 cp ${REWARD_FILE} ${TARGET_REWARD_FILE_S3_KEY} ${OPT_DRYRUN}
 aws s3 cp ${METADATA_FILE} ${TARGET_METADATA_FILE_S3_KEY} ${OPT_DRYRUN}
 aws s3 cp ${METRICS_FILE} ${TARGET_METRICS_FILE_S3_KEY} ${OPT_DRYRUN}
