@@ -26,6 +26,7 @@ then
   TARGET_METADATA_FILE_S3_KEY="s3://${TARGET_S3_BUCKET}/"$(awk '/MODEL_METADATA_FILE_S3_KEY/ {print $2}' $PARAM_FILE | sed "s/^\([\"']\)\(.*\)\1\$/\2/g")
   TARGET_REWARD_FILE_S3_KEY="s3://${TARGET_S3_BUCKET}/"$(awk '/REWARD_FILE_S3_KEY/ {print $2}' $PARAM_FILE | sed "s/^\([\"']\)\(.*\)\1\$/\2/g")
   TARGET_METRICS_FILE_S3_KEY="s3://${TARGET_S3_BUCKET}/"$(awk '/METRICS_S3_OBJECT_KEY/ {print $2}' $PARAM_FILE | sed "s/^\([\"']\)\(.*\)\1\$/\2/g")
+  TARGET_HYPERPARAM_FILE_S3_KEY="s3://${TARGET_S3_BUCKET}/${TARGET_S3_PREFIX}/ip/hyperparameters.json"
   MODEL_NAME=$(awk '/MODEL_METADATA_FILE_S3_KEY/ {print $2}' $PARAM_FILE | awk '{split($0,a,"/"); print a[2] }')
   echo "Preparing upload for model ${MODEL_NAME}."
 else
@@ -37,9 +38,10 @@ fi
 # Check if metadata-files are available
 REWARD_FILE=$(aws $LOCAL_PROFILE_ENDPOINT_URL s3 cp s3://${SOURCE_S3_BUCKET}/${SOURCE_S3_CONFIG}/reward.py ${WORK_DIR} --no-progress | awk '/reward.py$/ {print $4}'| xargs readlink -f)
 METADATA_FILE=$(aws $LOCAL_PROFILE_ENDPOINT_URL s3 cp s3://${SOURCE_S3_BUCKET}/${SOURCE_S3_CONFIG}/model_metadata.json ${WORK_DIR} --no-progress | awk '/model_metadata.json$/ {print $4}'| xargs readlink -f)
+HYPERPARAM_FILE=$(aws $LOCAL_PROFILE_ENDPOINT_URL s3 cp s3://${SOURCE_S3_BUCKET}/${SOURCE_S3_CONFIG}/hyperparameters.json ${WORK_DIR} --no-progress | awk '/hyperparameters.json$/ {print $4}'| xargs readlink -f)
 METRICS_FILE=$(aws $LOCAL_PROFILE_ENDPOINT_URL s3 cp s3://${SOURCE_S3_BUCKET}/metrics/metric.json ${WORK_DIR} --no-progress | awk '/metric.json$/ {print $4}'| xargs readlink -f)
 
-if [ -n "$METADATA_FILE" ] && [ -n "$REWARD_FILE" ] && [ -n "$METRICS_FILE" ]; 
+if [ -n "$METADATA_FILE" ] && [ -n "$REWARD_FILE" ] && [ -n "$METRICS_FILE" ] && [ -n "$HYPERPARAM_FILE" ]; 
 then
     echo "All meta-data files found. Looking for checkpoint."
     # SOURCE_METADATA_FILE_S3_KEY="s3://${SOURCE_S3_BUCKET}/${SOURCE_S3_CONFIG}/reward.py"
@@ -84,4 +86,4 @@ aws s3 sync ${WORK_DIR}model/ s3://${TARGET_S3_BUCKET}/${TARGET_S3_PREFIX}/model
 aws s3 cp ${REWARD_FILE} ${TARGET_REWARD_FILE_S3_KEY} 
 aws s3 cp ${METADATA_FILE} ${TARGET_METADATA_FILE_S3_KEY} 
 aws s3 cp ${METRICS_FILE} ${TARGET_METRICS_FILE_S3_KEY} 
-
+aws s3 cp ${HYPERPARAM_FILE} ${TARGET_HYPERPARAM_FILE_S3_KEY}
