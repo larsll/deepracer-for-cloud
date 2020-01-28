@@ -46,6 +46,10 @@ function dr-upload-custom-files {
   aws $LOCAL_PROFILE_ENDPOINT_URL s3 sync $DIR/custom_files/ $CUSTOM_TARGET
 }
 
+function dr-upload-model {
+  dr-update-env && ${DIR}/scripts/upload/upload-model.sh "$@"
+}
+
 function dr-upload-logs {
   if [[ "${CLOUD,,}" == "azure" ]];
   then
