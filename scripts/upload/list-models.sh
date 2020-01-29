@@ -58,7 +58,7 @@ else
         MODEL_NAME=$(awk '/MODEL_METADATA_FILE_S3_KEY/ {print $2}' ${WORK_DIR}/${PARAM_FILE_L} | awk '{split($0,a,"/"); print a[2] }')
         if [ "${MODEL_NAME}" = "${OPT_SET}" ]; then
             MATCHED_PREFIX=$(echo "$PARAM_FILE" | awk '{split($0,a,"/"); print a[1]}')
-            echo "Found in ${MATCHED_PREFIX}"
+            echo "Found in ${MODEL_NAME} in ${MATCHED_PREFIX}".
             break
         fi
     done
