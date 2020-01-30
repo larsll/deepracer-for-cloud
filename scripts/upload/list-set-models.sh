@@ -104,7 +104,7 @@ else
             echo "Aborting."
             exit 1
         else
-            sed -i.bak -re "s/(UPLOAD_S3_PREFIX=).*$/\1$MATCHED_PREFIX/g" "$CONFIG_FILE" && echo "Done."
+            sed -i.bak -re "s/(UPLOAD_S3_PREFIX=).*$/\1$MATCHED_PREFIX/g; s/(UPLOAD_MODEL_NAME=).*$/\1$MODEL_NAME/g" "$CONFIG_FILE" && echo "Done."
         fi
     fi
 fi
