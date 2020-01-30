@@ -54,7 +54,10 @@ This will prepare the VM by partitioning additional drives as well as installing
 
 The installation script will adapt `.profile` to ensure that all settings are applied on login.
 
+For local install it is recommended *not* to run the `bin/prepare.sh` script; it might do more changes than what you want. Rather ensure that all prerequisites are set up and run `bin/init.sh` directly.
+
 *TODO: Document how to configure via cloud-init.*
+*TODO: Create a local setup prepare script*
 
 ## Environment Setup
 
