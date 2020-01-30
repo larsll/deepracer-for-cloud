@@ -1,5 +1,6 @@
 #!/bin/bash
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+export DR_DIR=$DIR
 
 # create directory structure for docker volumes
 if ! (mount | grep /mnt > /dev/null); then
@@ -49,6 +50,15 @@ function dr-upload-custom-files {
 function dr-upload-model {
   dr-update-env && ${DIR}/scripts/upload/upload-model.sh "$@"
 }
+
+function dr-list-aws-models {
+  dr-update-env && ${DIR}/scripts/upload/list-set-models.sh "$@"
+}
+
+function dr-set-upload-model {
+  dr-update-env && ${DIR}/scripts/upload/list-set-models.sh "$@"
+}
+
 
 function dr-upload-logs {
   if [[ "${CLOUD,,}" == "azure" ]];

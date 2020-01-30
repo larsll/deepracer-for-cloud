@@ -10,6 +10,13 @@ usage(){
 	exit 1
 }
 
+trap ctrl_c INT
+
+function ctrl_c() {
+        echo "Requested to stop."
+        exit 1
+}
+
 while getopts ":fwdhc:p:" opt; do
 case $opt in
 c) OPT_CHECKPOINT="$OPTARG"
