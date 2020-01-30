@@ -1,4 +1,15 @@
 #!/usr/bin/env bash
+
+while getopts ":m:" opt; do
+case $opt in
+m) OPT_MOUNT="$OPTARG"
+;; 
+\?) echo "Invalid option -$OPTARG" >&2
+exit 1
+;;
+esac
+done
+
 GPUS=$(docker run --rm --gpus all nvidia/cuda:10.2-base nvidia-smi "-L" | awk  '/GPU .:/' | wc -l)
 if [ $? -ne 0 ] || [ $GPUS -eq 0 ]
 then
@@ -10,8 +21,12 @@ INSTALL_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." >/dev/null 2>&1 && pwd 
 cd $INSTALL_DIR
 
 # create directory structure for docker volumes
-mount /mnt
-sudo mkdir -p /mnt/deepracer /mnt/deepracer/recording /mnt/deepracer/robo/checkpoint 
+
+if [[ -n "$OPT_MOUNT" ]];
+then
+    mount "${OPT_MOUNT}"
+fi
+sudo mkdir -p /mnt/deepracer /mnt/deepracer/recording /mnt/deepracer/robo/checkpoint /mnt/deepracer/minio/bucket
 sudo chown -R $(id -u):$(id -g) /mnt/deepracer 
 mkdir -p $INSTALL_DIR/docker/volumes
 

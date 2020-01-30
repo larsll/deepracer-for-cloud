@@ -58,6 +58,10 @@ The installation script will adapt `.profile` to ensure that all settings are ap
 
 ## Environment Setup
 
+The environment is set via the `CLOUD` parameter in `current-run.env`; it can be `Azure`, `AWS` or `Local`. It is case-insensitive. Depending on the value the virtual or native S3 instance will be configured accordingly.
+
+Note: If in the `bin/prepare.sh` script then the working directory `/mnt/deepracer` will be provided based on the temporary storage partitions made available. If you want to provision the working directory in a different fashion then just ensure that a volume is mounted on `/mnt` or `/mnt/deepracer` with sufficient storage.
+
 ### AWS
 
 In AWS it is possible to set up authentication to S3 in two ways: Integrated sign-on using [IAM Roles](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html) or using access keys.
@@ -111,7 +115,7 @@ If you want to use awscli (`aws`) to manually move files then use `aws $LOCAL_PR
 
 ### Local
 
-*TODO*. The current script-set does not provide a direct way to host all files locally within the VM. It is possible to work around this by changing `docker\docker-compose-azure.yml` to put minio in a server and not an azure gateway mode.
+Local mode runs a minio server that hosts the data in the `/mnt/deepracer` partition. It is otherwise command-compatible with the Azure setup; as the data is accessible via Minio and not via native S3.
 
 ### Environment Variables
 The scripts assume that a file `current-run.env` is populated with the required values.
