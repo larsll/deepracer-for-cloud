@@ -91,6 +91,10 @@ function dr-start-training {
   bash -c "cd $DIR/scripts/training && ./start.sh"
 }
 
+function dr-increment-training {
+  dr-update-env && ${DIR}/scripts/training/increment.sh "$@" && dr-update-env
+}
+
 function dr-stop-training {
   dr-upload-logs
   ROBOMAKER_COMMAND="" bash -c "cd $DIR/scripts/training && ./stop.sh"

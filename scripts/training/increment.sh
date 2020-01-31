@@ -66,7 +66,7 @@ then
             exit 1
         fi
     fi
-    sed -i.bak -re "s/(PRETRAINED_S3_PREFIX=).*$/\1$CURRENT_RUN_MODEL/g; s/(PRETRAINED=).*$/\1True/g; ; s/(LOCAL_S3_MODEL_PREFIX=).*$/\1$NEW_RUN_MODEL/g" "$CONFIG_FILE" && echo "Done."
+    sed -i.bak -re "s/(LOCAL_S3_PRETRAINED_PREFIX=).*$/\1$CURRENT_RUN_MODEL/g; s/(LOCAL_S3_PRETRAINED=).*$/\1True/g; ; s/(LOCAL_S3_MODEL_PREFIX=).*$/\1$NEW_RUN_MODEL/g" "$CONFIG_FILE" && echo "Done."
 else
     echo    "Error in determining new model. Aborting."
     exit 1
@@ -90,5 +90,3 @@ then
     fi
     aws $LOCAL_PROFILE_ENDPOINT_URL s3 rm s3://${LOCAL_S3_BUCKET}/${NEW_RUN_MODEL} --recursive
 fi
-
-dr-update
