@@ -32,6 +32,7 @@ then
     export LOCAL_ACCESS_KEY_ID=$(aws --profile $LOCAL_S3_PROFILE configure get aws_access_key_id | xargs)
     export LOCAL_SECRET_ACCESS_KEY=$(aws --profile $LOCAL_S3_PROFILE configure get aws_secret_access_key | xargs)
     COMPOSE_FILE="$COMPOSE_FILE:$DIR/docker/docker-compose-keys.yml"
+    export UPLOAD_PROFILE="--profile $UPLOAD_S3_PROFILE"
 fi
 
 export COMPOSE_FILE
