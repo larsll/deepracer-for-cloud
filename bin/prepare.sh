@@ -12,10 +12,10 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 ## Patch system
 sudo apt-get update && sudo apt-mark hold grub-pc && sudo DEBIAN_FRONTEND=noninteractive apt-get -y -o \
                         DPkg::options::="--force-confdef" -o DPkg::options::="--force-confold" -qq --force-yes upgrade && \
-                        apt-get -y install jq
+                        sudo apt-get -y install jq
 
 source $DIR\detect.sh
-
+echo "Detected cloud type ${CLOUD_NAME}"
 
 ## Do I have a GPU
 GPUS=$(lspci | awk '/NVIDIA/ && /3D controller/' | wc -l)
@@ -119,7 +119,7 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 ## Reboot to load driver -- continue install if in cloud-init
 CLOUD_INIT=$(pstree -s $BASHPID | awk /cloud-init/ | wc -l)
-pstree
+
 if [[ "$CLOUD_INIT" -ne 0 ]];
 then
     echo "Rebooting in 5 seconds. Will continue with install."
