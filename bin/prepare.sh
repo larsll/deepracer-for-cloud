@@ -4,7 +4,11 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 ## Patch system
 sudo apt-get update && sudo apt-mark hold grub-pc && sudo DEBIAN_FRONTEND=noninteractive apt-get -y -o \
-                        DPkg::options::="--force-confdef" -o DPkg::options::="--force-confold" -qq --force-yes upgrade
+                        DPkg::options::="--force-confdef" -o DPkg::options::="--force-confold" -qq --force-yes upgrade && \
+                        apt-get -y install jq
+
+source $DIR\detect.sh
+
 
 ## Do I have a GPU
 GPUS=$(lspci | awk '/NVIDIA/ && /3D controller/' | wc -l)
@@ -77,8 +81,8 @@ sudo bash -c 'echo "deb http://developer.download.nvidia.com/compute/cuda/repos/
 sudo bash -c 'echo "deb http://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64 /" > /etc/apt/sources.list.d/cuda_learn.list'
 sudo bash -c 'apt update && apt install -y nvidia-driver-440 cuda-minimal-build-10-2 -o Dpkg::Options::="--force-overwrite"'
 
-## Adding AWSCli and JQ
-sudo apt-get install -y awscli jq
+## Adding AWSCli
+sudo apt-get install -y awscli 
 
 ## Installing Docker
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
