@@ -8,7 +8,7 @@ then
     if [[ "${CLOUD_NAME}" == "azure" ]];
     then
         export CLOUD_NAME
-        export CLOUD_INSTANCETYPE=$(jq -r '.ds."meta-data".imds."vmSize"' /var/run/cloud-init/instance-data.json)
+        export CLOUD_INSTANCETYPE=$(jq -r '.ds."meta_data".imds.compute."vmSize"' /var/run/cloud-init/instance-data.json)
     elif [[ "${CLOUD_NAME}" == "aws" ]];
     then
         export CLOUD_NAME
