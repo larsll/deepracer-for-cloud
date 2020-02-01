@@ -1,9 +1,18 @@
 #!/usr/bin/env bash
 
-while getopts ":m:" opt; do
+trap ctrl_c INT
+
+function ctrl_c() {
+        echo "Requested to stop."
+        exit 1
+}
+
+while getopts ":m:c:" opt; do
 case $opt in
 m) OPT_MOUNT="$OPTARG"
 ;; 
+c) OPT_CLOUD="$OPTARG"
+;;
 \?) echo "Invalid option -$OPTARG" >&2
 exit 1
 ;;

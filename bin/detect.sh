@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -x
+
 ## What am I?
 if [[ -f /var/run/cloud-init/instance-data.json ]]; 
 then
@@ -14,8 +14,8 @@ then
         export CLOUD_NAME
         export CLOUD_INSTANCETYPE=$(jq -r '.ds."meta-data"."instance-type"' /var/run/cloud-init/instance-data.json)
     else
-        export CLOUD_NAME=Local
+        export CLOUD_NAME=local
     fi
 else
-    export CLOUD_NAME=Local
+    export CLOUD_NAME=local
 fi
