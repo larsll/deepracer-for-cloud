@@ -118,7 +118,7 @@ sudo curl -L https://github.com/docker/compose/releases/download/1.25.0/docker-c
 sudo chmod +x /usr/local/bin/docker-compose
 
 ## Reboot to load driver -- continue install if in cloud-init
-CLOUD_INIT=$(pstree -s $BASHPID | awk /bash/ | wc -l)
+CLOUD_INIT=$(pstree -s $BASHPID | awk /cloud-init/ | wc -l)
 if [[ "$CLOUD_INIT" -ne 0 ]];
 then
     echo "Rebooting in 5 seconds. Will continue with install."
