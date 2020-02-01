@@ -14,7 +14,7 @@ sudo apt-get update && sudo apt-mark hold grub-pc && sudo DEBIAN_FRONTEND=nonint
                         DPkg::options::="--force-confdef" -o DPkg::options::="--force-confold" -qq --force-yes upgrade && \
                         sudo apt-get -y install jq
 
-source $DIR\detect.sh
+source $DIR/detect.sh
 echo "Detected cloud type ${CLOUD_NAME}"
 
 ## Do I have a GPU
