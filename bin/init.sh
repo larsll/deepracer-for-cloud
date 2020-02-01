@@ -43,7 +43,7 @@ mkdir -p $INSTALL_DIR/docker/volumes
 # NOTE: AWS cli must be installed for this to work
 # https://docs.aws.amazon.com/cli/latest/userguide/install-linux-al2017.html
 mkdir -p $(eval echo "~${USER}")/.aws
-ln -s $(eval echo "~${USER}")/.aws  $INSTALL_DIR/docker/volumes/
+ln -sf $(eval echo "~${USER}")/.aws  $INSTALL_DIR/docker/volumes/
 
 # grab local training deepracer repo from crr0004 and log analysis repo from vreadcentric
 # Now as submodules!
@@ -72,7 +72,7 @@ cd ..
 # replace the contents of the rl_deepracer_coach_robomaker.py file with the gpu specific version (this is also where you can edit the hyperparameters)
 # TODO this file should be genrated from a gui before running training
 cp $INSTALL_DIR/defaults/template-run.env $INSTALL_DIR/current-run.env
-sed -i "s/<CLOUD_REPLACE>/$CLOUD_NAME/g" $INSTALL_DIR/current-run.env
+sed -i "s/<CLOUD_REPLACE>/$OPT_CLOUD/g" $INSTALL_DIR/current-run.env
 
 #set proxys if required
 for arg in "$@";
