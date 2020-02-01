@@ -119,6 +119,7 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 ## Reboot to load driver -- continue install if in cloud-init
 CLOUD_INIT=$(pstree -s $BASHPID | awk /cloud-init/ | wc -l)
+pstree
 if [[ "$CLOUD_INIT" -ne 0 ]];
 then
     echo "Rebooting in 5 seconds. Will continue with install."
