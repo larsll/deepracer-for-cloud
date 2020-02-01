@@ -72,7 +72,10 @@ cd ..
 # replace the contents of the rl_deepracer_coach_robomaker.py file with the gpu specific version (this is also where you can edit the hyperparameters)
 # TODO this file should be genrated from a gui before running training
 cp $INSTALL_DIR/defaults/template-run.env $INSTALL_DIR/current-run.env
-sed -i "s/<CLOUD_REPLACE>/$OPT_CLOUD/g" $INSTALL_DIR/current-run.env
+if [[ -n "$OPT_CLOUD" ]];
+then
+    sed -i "s/<CLOUD_REPLACE>/$OPT_CLOUD/g" $INSTALL_DIR/current-run.env
+fi
 
 #set proxys if required
 for arg in "$@";
