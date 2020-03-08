@@ -1,7 +1,3 @@
-[submodule "deepracer"]
-	path = deepracer
-	url = https://github.com/crr0004/deepracer.git
-	ignore = dirty
 [submodule "aws-deepracer-workshops"]
 	path = aws-deepracer-workshops
 	url = https://github.com/breadcentric/aws-deepracer-workshops.git
