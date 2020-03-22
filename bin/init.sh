@@ -56,8 +56,10 @@ cp $INSTALL_DIR/deepracer/simulation/aws-robomaker-sample-application-deepracer/
 
 # copy rewardfunctions
 mkdir -p $INSTALL_DIR/custom_files $INSTALL_DIR/analysis
-cp $INSTALL_DIR/deepracer/custom_files/* $INSTALL_DIR/custom_files/
 cp $INSTALL_DIR/defaults/hyperparameters.json $INSTALL_DIR/custom_files/
+cp $INSTALL_DIR/defaults/model_metadata.json $INSTALL_DIR/custom_files/
+cp $INSTALL_DIR/defaults/rewards.py $INSTALL_DIR/custom_files/
+
 
 cp $INSTALL_DIR/defaults/template-run.env $INSTALL_DIR/current-run.env
 if [[ -n "$OPT_CLOUD" ]];
