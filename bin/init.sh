@@ -59,18 +59,6 @@ mkdir -p $INSTALL_DIR/custom_files $INSTALL_DIR/analysis
 cp $INSTALL_DIR/deepracer/custom_files/* $INSTALL_DIR/custom_files/
 cp $INSTALL_DIR/defaults/hyperparameters.json $INSTALL_DIR/custom_files/
 
-# setup symlink to rl-coach config file
-# ln -f $INSTALL_DIR/defaults/rl_deepracer_coach_robomaker.py $INSTALL_DIR/deepracer/rl_coach/rl_deepracer_coach_robomaker.py 
-
-# patching files in submodules that don't entirely fit our needs
-# cd $INSTALL_DIR/deepracer/
-# patch simulation/aws-robomaker-sample-application-deepracer/simulation_ws/src/sagemaker_rl_agent/markov/environments/deepracer_racetrack_env.py < ../defaults/deepracer_racetrack_env.py.patch 
-# patch robomaker.env < ../defaults/robomaker.env.patch
-# patch rl_coach/env.sh < ../defaults/rl_coach_env.sh.patch
-# cd ..
-
-# replace the contents of the rl_deepracer_coach_robomaker.py file with the gpu specific version (this is also where you can edit the hyperparameters)
-# TODO this file should be genrated from a gui before running training
 cp $INSTALL_DIR/defaults/template-run.env $INSTALL_DIR/current-run.env
 if [[ -n "$OPT_CLOUD" ]];
 then
@@ -88,10 +76,7 @@ do
 done
 
 # Download docker images. Change to build statements if locally built images are desired.
-# docker build ${args} -f ./docker/dockerfiles/rl_coach/Dockerfile -t larsll/deepracer-rlcoach ./
-# docker build ./docker/dockerfiles/deepracer_robomaker/ -t larsll/deepracer-robomaker
-# docker build ./docker/dockerfiles/log-analysis/ -t larsll/deepracer-loganalysis
-# docker pull larsll/deepracer-rlcoach
+docker pull larsll/deepracer-rlcoach:v2
 docker pull awsdeepracercommunity/deepracer-robomaker:gpu
 docker pull awsdeepracercommunity/deepracer-sagemaker:gpu
 # docker pull larsll/deepracer-loganalysis
