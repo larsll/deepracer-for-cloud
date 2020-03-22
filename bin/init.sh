@@ -92,7 +92,7 @@ done
 # docker build ./docker/dockerfiles/deepracer_robomaker/ -t larsll/deepracer-robomaker
 # docker build ./docker/dockerfiles/log-analysis/ -t larsll/deepracer-loganalysis
 # docker pull larsll/deepracer-rlcoach
-docker pull awsdeepracercommunity/deepracer-robomaker:cpu
+docker pull awsdeepracercommunity/deepracer-robomaker:gpu
 docker pull awsdeepracercommunity/deepracer-sagemaker:gpu
 # docker pull larsll/deepracer-loganalysis
 
