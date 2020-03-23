@@ -45,21 +45,11 @@ mkdir -p $INSTALL_DIR/docker/volumes
 mkdir -p $(eval echo "~${USER}")/.aws
 ln -sf $(eval echo "~${USER}")/.aws  $INSTALL_DIR/docker/volumes/
 
-# grab local training deepracer repo from crr0004 and log analysis repo from vreadcentric
-# Now as submodules!
-# git clone --recurse-submodules https://github.com/crr0004/deepracer.git
-# git clone https://github.com/breadcentric/aws-deepracer-workshops.git && cd aws-deepracer-workshops && git checkout enhance-log-analysis && cd ..
-git submodule update --init --recursive
-
-ln -sf $INSTALL_DIR/aws-deepracer-workshops/log-analysis  $INSTALL_DIR/docker/volumes/log-analysis
-cp $INSTALL_DIR/deepracer/simulation/aws-robomaker-sample-application-deepracer/simulation_ws/src/deepracer_simulation/routes/* docker/volumes/log-analysis/tracks/
-
 # copy rewardfunctions
 mkdir -p $INSTALL_DIR/custom_files $INSTALL_DIR/analysis
 cp $INSTALL_DIR/defaults/hyperparameters.json $INSTALL_DIR/custom_files/
 cp $INSTALL_DIR/defaults/model_metadata.json $INSTALL_DIR/custom_files/
 cp $INSTALL_DIR/defaults/rewards.py $INSTALL_DIR/custom_files/
-
 
 cp $INSTALL_DIR/defaults/template-run.env $INSTALL_DIR/current-run.env
 if [[ -n "$OPT_CLOUD" ]];
@@ -81,7 +71,7 @@ done
 docker pull larsll/deepracer-rlcoach:v2
 docker pull awsdeepracercommunity/deepracer-robomaker:gpu
 docker pull awsdeepracercommunity/deepracer-sagemaker:gpu
-# docker pull larsll/deepracer-loganalysis
+docker pull larsll/deepracer-loganalysis:v2
 
 # create the network sagemaker-local if it doesn't exit
 SAGEMAKER_NW='sagemaker-local'
