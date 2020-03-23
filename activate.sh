@@ -64,22 +64,6 @@ function dr-set-upload-model {
   dr-update-env && ${DIR}/scripts/upload/list-set-models.sh "$@"
 }
 
-
-function dr-upload-logs {
-  if [[ "${CLOUD,,}" == "azure" || "${CLOUD,,}" == "local" ]];
-  then
-	  ROBOMAKER_COMMAND="" docker-compose $COMPOSE_FILES up -d minio
-  fi
-  if [ -d /mnt/deepracer/robo/checkpoint/log/ ];
-  then
-    eval CUSTOM_TARGET=$(echo s3://$LOCAL_S3_BUCKET/$LOCAL_S3_LOGS_PREFIX/)
-    echo "Uploading files to $CUSTOM_TARGET"
-    aws $LOCAL_PROFILE_ENDPOINT_URL s3 sync /mnt/deepracer/robo/checkpoint/log $CUSTOM_TARGET --exclude "*" --include "rl_coach*.log*" --no-follow-symlinks
-  else
-    echo "No logfiles to upload"
-  fi
-}
-
 function dr-download-custom-files {
   if [[ "${CLOUD,,}" == "azure" || "${CLOUD,,}" == "local" ]];
   then
@@ -100,7 +84,6 @@ function dr-increment-training {
 }
 
 function dr-stop-training {
-  dr-upload-logs
   ROBOMAKER_COMMAND="" bash -c "cd $DIR/scripts/training && ./stop.sh"
 }
 
@@ -110,7 +93,6 @@ function dr-start-evaluation {
 }
 
 function dr-stop-evaluation {
-  dr-upload-logs
   ROBOMAKER_COMMAND="" bash -c "cd $DIR/scripts/evaluation && ./stop.sh"
 }
 
@@ -158,7 +140,7 @@ function dr-logs-loganalysis {
 
 function dr-clean-local {
   dr-stop-training
-  sudo rm -rf /robo/* && sudo rm -rf /mnt/deepracer/robo/checkpoint/*
+  sudo rm -rf /robo/* 
 }
 
 function dr-update {
