@@ -161,14 +161,6 @@ function dr-clean-local {
   sudo rm -rf /robo/* && sudo rm -rf /mnt/deepracer/robo/checkpoint/*
 }
 
-function dr-logs-start-proxy {
-   docker-compose -f $DIR/docker/docker-compose-log.yml up -d
-}
-
-function dr-logs-stop-proxy {
-   docker-compose -f $DIR/docker/docker-compose-log.yml down
-}
-
 function dr-update {
    source $DIR/activate.sh
 }
