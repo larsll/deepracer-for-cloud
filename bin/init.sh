@@ -46,7 +46,7 @@ mkdir -p $(eval echo "~${USER}")/.aws
 ln -sf $(eval echo "~${USER}")/.aws  $INSTALL_DIR/docker/volumes/
 
 # copy rewardfunctions
-mkdir -p $INSTALL_DIR/custom_files $INSTALL_DIR/analysis
+mkdir -p $INSTALL_DIR/custom_files $INSTALL_DIR/logs $INSTALL_DIR/analysis
 cp $INSTALL_DIR/defaults/hyperparameters.json $INSTALL_DIR/custom_files/
 cp $INSTALL_DIR/defaults/model_metadata.json $INSTALL_DIR/custom_files/
 cp $INSTALL_DIR/defaults/rewards.py $INSTALL_DIR/custom_files/
@@ -71,7 +71,7 @@ done
 docker pull larsll/deepracer-rlcoach:v2
 docker pull awsdeepracercommunity/deepracer-robomaker:gpu
 docker pull awsdeepracercommunity/deepracer-sagemaker:gpu
-docker pull larsll/deepracer-loganalysis:v2
+docker pull larsll/deepracer-loganalysis:v2-cpu
 
 # create the network sagemaker-local if it doesn't exit
 SAGEMAKER_NW='sagemaker-local'
