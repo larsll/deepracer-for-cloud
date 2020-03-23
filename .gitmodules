@@ -1,5 +1,0 @@
-[submodule "aws-deepracer-workshops"]
-	path = aws-deepracer-workshops
-	url = https://github.com/breadcentric/aws-deepracer-workshops.git
-	branch = enhance-log-analysis
-	ignore = dirty
