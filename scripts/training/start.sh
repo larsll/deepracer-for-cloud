@@ -44,6 +44,7 @@ echo "Creating Robomaker configuration in $S3_PATH/training_params.yaml"
 python3 prepare-config.py
 
 export ROBOMAKER_COMMAND="./run.sh build distributed_training.launch"
+export COMPOSE_FILE=$DR_COMPOSE_FILE
 docker-compose up -d
 echo 'Waiting for containers to start up...'
 

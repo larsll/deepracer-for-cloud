@@ -78,7 +78,7 @@ function dr-download-custom-files {
 
 function dr-start-training {
   dr-update-env
-  bash -c "cd $DIR/scripts/training && ./start.sh"
+  bash -c "cd $DIR/scripts/training && ./start.sh $@"
 }
 
 function dr-increment-training {
