@@ -9,34 +9,37 @@ services:
   rl_coach:
     image: larsll/deepracer-rlcoach:v2
     environment:
-      - GPU_AVAILABLE=True
-      - PRETRAINED=${LOCAL_S3_PRETRAINED}
-      - PRETRAINED_S3_PREFIX=${LOCAL_S3_PRETRAINED_PREFIX}
-      - PRETRAINED_S3_BUCKET=${LOCAL_S3_BUCKET}
-      - MODEL_S3_PREFIX=${LOCAL_S3_MODEL_PREFIX}
-      - MODEL_S3_BUCKET=${LOCAL_S3_BUCKET}
+      - GPU_AVAILABLE=${DR_GPU_AVAILABLE}
+      - IMAGE_TYPE=${DR_DOCKER_IMAGE_TYPE}
+      - PRETRAINED=${DR_LOCAL_S3_PRETRAINED}
+      - PRETRAINED_S3_PREFIX=${DR_LOCAL_S3_PRETRAINED_PREFIX}
+      - PRETRAINED_S3_BUCKET=${DR_LOCAL_S3_BUCKET}
+      - MODEL_S3_PREFIX=${DR_LOCAL_S3_MODEL_PREFIX}
+      - MODEL_S3_BUCKET=${DR_LOCAL_S3_BUCKET}
     container_name: coach
     volumes:
     - '//var/run/docker.sock:/var/run/docker.sock'
     - '/robo/container:/robo/container'
   robomaker:
-    image: awsdeepracercommunity/deepracer-robomaker:gpu
+    image: awsdeepracercommunity/deepracer-robomaker:${DR_ROBOMAKER_IMAGE_TYPE}
     command: ["${ROBOMAKER_COMMAND}"]
     volumes:
       - /mnt/deepracer/recording:/mnt/recording
     ports:
-      - "8080:5900"
+      - "8080:8080"
     container_name: robomaker
     restart: unless-stopped
     environment:
-      - WORLD_NAME
-      - NUMBER_OF_TRIALS=${NUMBER_OF_TRIALS}
-      - SAGEMAKER_SHARED_S3_PREFIX=${LOCAL_S3_MODEL_PREFIX}
-      - SAGEMAKER_SHARED_S3_BUCKET=${LOCAL_S3_BUCKET}
-      - APP_REGION=eu-central-1
-      - S3_YAML_NAME=training_params.yaml
-      - KINESIS_VIDEO_STREAM_NAME=larsll-deepracer-test-stream
-      - ENABLE_KINESIS=True
-      - ENABLE_GUI=False
+      - XAUTHORITY=/root/.Xauthority
+      - DISPLAY_N=:0
+      - WORLD_NAME=${DR_WORLD_NAME}
+      - NUMBER_OF_TRIALS=${DR_NUMBER_OF_EPISODES}
+      - SAGEMAKER_SHARED_S3_PREFIX=${DR_LOCAL_S3_MODEL_PREFIX}
+      - SAGEMAKER_SHARED_S3_BUCKET=${DR_LOCAL_S3_BUCKET}
+      - APP_REGION=${DR_AWS_APP_REGION}
+      - S3_YAML_NAME=${DR_LOCAL_S3_PARAMS_FILE}
+      - KINESIS_VIDEO_STREAM_NAME=${DR_KINESIS_STREAM_NAME}
+      - ENABLE_KINESIS=${DR_KINESIS_STREAM_ENABLE}
+      - ENABLE_GUI=${DR_GUI_ENABLE}
     depends_on:
     - rl_coach

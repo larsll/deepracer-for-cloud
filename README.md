@@ -76,10 +76,10 @@ To use IAM Roles:
 * An IAM Role that has permissions to access both the *new* S3 bucket as well as the DeepRacer bucket.
 * An EC2 instance with the IAM Role assigned.
 * Configure `current-run.env` as follows:
-  * `LOCAL_S3_PROFILE=default`
-  * `LOCAL_S3_BUCKET=<bucketname>`
-  * `UPLOAD_S3_PROFILE=default`
-  * `UPLOAD_S3_BUCKET=<your-aws-deepracer-bucket>`
+  * `DR_LOCAL_S3_PROFILE=default`
+  * `DR_LOCAL_S3_BUCKET=<bucketname>`
+  * `DR_UPLOAD_S3_PROFILE=default`
+  * `DR_UPLOAD_S3_BUCKET=<your-aws-deepracer-bucket>`
 * Run `dr-update` for configuration to take effect.
 
 
@@ -90,10 +90,10 @@ For access with IAM user:
   * User should have permissions to access the *new* bucket as well as the dedicated DeepRacer S3 bucket.
   * Use `aws configure` to configure this into the default profile. 
 * Configure `current-run.env` as follows:
-  * `LOCAL_S3_PROFILE=default`
-  * `LOCAL_S3_BUCKET=<bucketname>`
-  * `UPLOAD_S3_PROFILE=default`
-  * `UPLOAD_S3_BUCKET=<your-aws-deepracer-bucket>`
+  * `DR_LOCAL_S3_PROFILE=default`
+  * `DR_LOCAL_S3_BUCKET=<bucketname>`
+  * `DR_UPLOAD_S3_PROFILE=default`
+  * `DR_UPLOAD_S3_BUCKET=<your-aws-deepracer-bucket>`
 * Run `dr-update` for configuration to take effect.
 
 ### Azure
@@ -106,15 +106,15 @@ In Azure mode the script-set requires the following:
   	* The blob container is equivalent to the S3 bucket.
 * A real AWS IAM user configured with `aws configure` to enable upload of models into AWS DeepRacer.
 * Configure `current-run.env` as follows:
-  * `LOCAL_S3_PROFILE=<myprofile>`
-  * `LOCAL_S3_BUCKET=<blobcontainer-name>`
-  * `UPLOAD_S3_PROFILE=default`
-  * `UPLOAD_S3_BUCKET=<your-aws-deepracer-bucket>`
+  * `DR_LOCAL_S3_PROFILE=<myprofile>`
+  * `DR_LOCAL_S3_BUCKET=<blobcontainer-name>`
+  * `DR_UPLOAD_S3_PROFILE=default`
+  * `DR_UPLOAD_S3_BUCKET=<your-aws-deepracer-bucket>`
 * Run `dr-update` for configuration to take effect.
 
 As Azure does not natively support S3 a [minio](https://min.io/product/overview) proxy is set up on port 9000 to allow the containers to communicate and store models.
 
-If you want to use awscli (`aws`) to manually move files then use `aws $LOCAL_PROFILE_ENDPOINT_URL s3 ...`, as this will set both `--profile` and `--endpoint-url` parameters to match your configuration.
+If you want to use awscli (`aws`) to manually move files then use `aws $DR_LOCAL_PROFILE_ENDPOINT_URL s3 ...`, as this will set both `--profile` and `--endpoint-url` parameters to match your configuration.
 
 ### Local
 
@@ -125,25 +125,29 @@ The scripts assume that a file `current-run.env` is populated with the required 
 
 | Variable | Description |
 |----------|-------------|
-| `CLOUD` | Can be `Azure` or `AWS`; determines how the storage will be configured.|
-| `WORLD_NAME` | Defines the track to be used.| 
-| `NUMBER_OF_TRIALS` | Defines the number of trials in an evaluation session.| 
-| `CHANGE_START_POSITION` | Determines if the racer shall round-robin the starting position during training sessions. (Recommended to be `True` for initial training.)| 
-| `LOCAL_S3_PROFILE` | Name of AWS profile with credentials to be used. Stored in `~/.aws/credentials` unless AWS IAM Roles are used.|
-| `LOCAL_S3_BUCKET` | Name of S3 bucket which will be used during the session.|
-| `LOCAL_S3_MODEL_PREFIX` | Prefix of model within S3 bucket.|
-| `LOCAL_S3_CUSTOM_FILES_PREFIX` | Prefix of configuration files within S3 bucket.|
-| `LOCAL_S3_LOGS_PREFIX` | Prefix of log files within S3 bucket. |
-| `LOCAL_S3_PRETRAINED` | Determines if training or evaluation shall be based on the model created in a previous session, held in `s3://{LOCAL_S3_BUCKET}/{LOCAL_S3_PRETRAINED_PREFIX}`, accessible by credentials held in profile `{LOCAL_S3_PROFILE}`.| 
-| `LOCAL_S3_PRETRAINED_PREFIX` | Prefix of pretrained model within S3 bucket.|
-| `LOGS_ACCESS_KEY` | Username for local S3 log proxy (minio container).|
-| `LOGS_ACCESS_SECRET` | Password for local S3 log proxy (minio container).|
-| `UPLOAD_S3_PROFILE` | AWS Cli profile to be used that holds the 'real' S3 credentials needed to upload a model into AWS DeepRacer.|
-| `UPLOAD_S3_BUCKET` | Name of the AWS DeepRacer bucket where models will be uploaded. (Typically starts with `aws-deepracer-`.)|
-| `UPLOAD_S3_PREFIX` | Prefix of the target location. (Typically starts with `DeepRacer-SageMaker-RoboMaker-comm-`|
-| `UPLOAD_MODEL_NAME` | Display name of model, not currently used; `dr-set-upload-model` sets it for readability purposes.|
-
-
+| `DR_CLOUD` | Can be `Azure` or `AWS`; determines how the storage will be configured.|
+| `DR_WORLD_NAME` | Defines the track to be used.| 
+| `DR_NUMBER_OF_TRIALS` | Defines the number of trials in an evaluation session.| 
+| `DR_CHANGE_START_POSITION` | Determines if the racer shall round-robin the starting position during training sessions. (Recommended to be `True` for initial training.)| 
+| `DR_LOCAL_S3_PROFILE` | Name of AWS profile with credentials to be used. Stored in `~/.aws/credentials` unless AWS IAM Roles are used.|
+| `DR_LOCAL_S3_BUCKET` | Name of S3 bucket which will be used during the session.|
+| `DR_LOCAL_S3_MODEL_PREFIX` | Prefix of model within S3 bucket.|
+| `DR_LOCAL_S3_CUSTOM_FILES_PREFIX` | Prefix of configuration files within S3 bucket.|
+| `DR_LOCAL_S3_PRETRAINED` | Determines if training or evaluation shall be based on the model created in a previous session, held in `s3://{DR_LOCAL_S3_BUCKET}/{LOCAL_S3_PRETRAINED_PREFIX}`, accessible by credentials held in profile `{DR_LOCAL_S3_PROFILE}`.| 
+| `DR_LOCAL_S3_PRETRAINED_PREFIX` | Prefix of pretrained model within S3 bucket.|
+| `DR_LOCAL_S3_PARAMS_FILE` | YAML file path used to configure Robomaker relative to `s3://{DR_LOCAL_S3_BUCKET}/{LOCAL_S3_PRETRAINED_PREFIX}`.| 
+| `DR_UPLOAD_S3_PROFILE` | AWS Cli profile to be used that holds the 'real' S3 credentials needed to upload a model into AWS DeepRacer.|
+| `DR_UPLOAD_S3_BUCKET` | Name of the AWS DeepRacer bucket where models will be uploaded. (Typically starts with `aws-deepracer-`.)|
+| `DR_UPLOAD_S3_PREFIX` | Prefix of the target location. (Typically starts with `DeepRacer-SageMaker-RoboMaker-comm-`|
+| `DR_UPLOAD_MODEL_NAME` | Display name of model, not currently used; `dr-set-upload-model` sets it for readability purposes.|
+| `DR_CAR_COLOR` | Color of car | 
+| `DR_CAR_NAME` | Display name of car; shows in Deepracer Console when uploading. |
+| `DR_AWS_APP_REGION` | (AWS only) Region for other AWS resources (e.g. Kinesis) |
+| `DR_KINESIS_STREAM_NAME` | Kinesis stream name | 
+| `DR_KINESIS_STREAM_ENABLE` | Enable or disable Kinesis Stream | 
+| `DR_GUI_ENABLE` | Enable or disable the Gazebo GUI in Robomaker | 
+| `DR_GPU_AVAILABLE` | Is GPU enabled? | 
+| `DR_DOCKER_IMAGE_TYPE` | `cpu` or `gpu`; docker images will be used based on this | 
 ## Usage
 
 Before every session run `dr-update` to ensure that the environment variables are set correctly. This also creates a set of aliases/commands that makes it easier to operate the setup. If `dr-update` is not found, try `source activate.sh` to get aliases defined.
@@ -156,9 +160,8 @@ Ensure that the configuration files are uploaded into the bucket `dr-upload-cust
 |---------|-------------|
 | `dr-update` | Loads in all scripts and environment variables again.| 
 | `dr-update-env` | Loads in all environment variables from `current-run.env`.|
-| `dr-upload-custom-files` | Uploads changed configuration files from `custom_files/` into `s3://{LOCAL_S3_BUCKET}/custom_files`.|
-| `dr-download-custom-files` | Downloads changed configuration files from `s3://{LOCAL_S3_BUCKET}/custom_files` into `custom_files/`.|
-| `dr-upload-logs` | Uploads changed Robomaker log files from `/mnt/deepracer/robo/checkpoint/log` into `s3://{LOCAL_S3_BUCKET}/${LOCAL_S3_LOGS_PREFIX}`.|
+| `dr-upload-custom-files` | Uploads changed configuration files from `custom_files/` into `s3://{DR_LOCAL_S3_BUCKET}/custom_files`.|
+| `dr-download-custom-files` | Downloads changed configuration files from `s3://{DR_LOCAL_S3_BUCKET}/custom_files` into `custom_files/`.|
 | `dr-start-training` | Starts a training session in the local VM based on current configuration.|
 | `dr-increment-training` | Updates configuration, setting the current model prefix to pretrained, and incrementing a serial.|
 | `dr-stop-training` | Stops the current local training session. Uploads log files.|
@@ -172,4 +175,4 @@ Ensure that the configuration files are uploaded into the bucket `dr-upload-cust
 | `dr-logs-stop-proxy` | Stops the local Minio S3 instance on port 9001. |
 | `dr-list-aws-models` | Lists the models that are currently stored in your AWS DeepRacer S3 bucket. |
 | `dr-set-upload-model` | Updates the `current-run.env` with the prefix and name of your selected model. |
-| `dr-upload-model` | Uploads the model defined in `LOCAL_S3_MODEL_PREFIX` to the AWS DeepRacer S3 prefix defined in `UPLOAD_S3_PREFIX` |
+| `dr-upload-model` | Uploads the model defined in `DR_LOCAL_S3_MODEL_PREFIX` to the AWS DeepRacer S3 prefix defined in `DR_UPLOAD_S3_PREFIX` |

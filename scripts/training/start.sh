@@ -1,11 +1,54 @@
 #!/usr/bin/env bash
 
+usage(){
+	echo "Usage: $0 [-w]"
+  echo "       -w        Wipes the target AWS DeepRacer model structure before upload."
+	exit 1
+}
+
+trap ctrl_c INT
+
+function ctrl_c() {
+        echo "Requested to stop."
+        exit 1
+}
+
+while getopts ":wh" opt; do
+case $opt in
+w) OPT_WIPE="WIPE"
+;;
+h) usage
+;;
+\?) echo "Invalid option -$OPTARG" >&2
+usage
+;;
+esac
+done
+
+S3_PATH="s3://$DR_LOCAL_S3_BUCKET/$DR_LOCAL_S3_MODEL_PREFIX"
+
+S3_FILES=$(aws ${DR_LOCAL_PROFILE_ENDPOINT_URL} s3 ls ${S3_PATH} | wc -l)
+if [[ $S3_FILES > 0 ]];
+then  
+  if [[ -z $OPT_WIPE ]];
+  then
+    echo "Selected path $S3_PATH exists. Delete it, or use -w option. Exiting."
+    exit 1
+  else
+    echo "Wiping path $S3_PATH."
+    aws ${DR_LOCAL_PROFILE_ENDPOINT_URL} s3 rm --recursive ${S3_PATH}
+  fi
+fi
+
+echo "Creating Robomaker configuration in $S3_PATH/training_params.yaml"
+python3 prepare-config.py
+
 export ROBOMAKER_COMMAND="./run.sh build distributed_training.launch"
 docker-compose up -d
-echo 'waiting for containers to start up...'
+echo 'Waiting for containers to start up...'
 
 #sleep for 20 seconds to allow the containers to start
-sleep 20
+sleep 5
 
 if xhost >& /dev/null;
 then

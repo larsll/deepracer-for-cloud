@@ -3,7 +3,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 export DR_DIR=$DIR
 
 # create directory structure for docker volumes
-if ! (mount | grep /mnt > /dev/null); then
+if [[ $(mount | grep /mnt | wc -l) -ne 0 ]]; then
   mount /mnt
 fi
 sudo mkdir -p /mnt/deepracer /mnt/deepracer/recording
@@ -17,39 +17,41 @@ else
   exit 1
 fi
 
-if [[ "${CLOUD,,}" == "azure" ]];
+if [[ "${DR_CLOUD,,}" == "azure" ]];
 then
-    LOCAL_PROFILE_ENDPOINT_URL="--profile $LOCAL_S3_PROFILE --endpoint-url http://localhost:9000"
-    COMPOSE_FILE="$DIR/docker/docker-compose.yml:$DIR/docker/docker-compose-azure.yml"
-elif [[ "${CLOUD,,}" == "local" ]];
+    export DR_LOCAL_S3_ENDPOINT_URL="http://localhost:9000"
+    DR_LOCAL_PROFILE_ENDPOINT_URL="--profile $DR_LOCAL_S3_PROFILE --endpoint-url $DR_LOCAL_ENDPOINT_URL"
+    DR_COMPOSE_FILE="$DIR/docker/docker-compose.yml:$DIR/docker/docker-compose-azure.yml"
+elif [[ "${DR_CLOUD,,}" == "local" ]];
 then
-    LOCAL_PROFILE_ENDPOINT_URL="--profile $LOCAL_S3_PROFILE --endpoint-url http://localhost:9000"
-    COMPOSE_FILE="$DIR/docker/docker-compose.yml:$DIR/docker/docker-compose-local.yml"
+    export DR_LOCAL_S3_ENDPOINT_URL="http://localhost:9000"
+    DR_LOCAL_PROFILE_ENDPOINT_URL="--profile $DR_LOCAL_S3_PROFILE --endpoint-url $DR_LOCAL_ENDPOINT_URL"
+    DR_COMPOSE_FILE="$DIR/docker/docker-compose.yml:$DIR/docker/docker-compose-local.yml"
 else
-    LOCAL_PROFILE_ENDPOINT_URL=""
-    COMPOSE_FILE="$DIR/docker/docker-compose.yml"
+    DR_LOCAL_PROFILE_ENDPOINT_URL=""
+    DR_COMPOSE_FILE="$DIR/docker/docker-compose.yml"
 fi
 
 ## Check if we have an AWS IAM assumed role, or if we need to set specific credentials.
 if [ $(aws sts get-caller-identity | jq '.Arn' | awk /assumed-role/ | wc -l) -eq 0 ];
 then
-    export LOCAL_ACCESS_KEY_ID=$(aws --profile $LOCAL_S3_PROFILE configure get aws_access_key_id | xargs)
-    export LOCAL_SECRET_ACCESS_KEY=$(aws --profile $LOCAL_S3_PROFILE configure get aws_secret_access_key | xargs)
-    COMPOSE_FILE="$COMPOSE_FILE:$DIR/docker/docker-compose-keys.yml"
-    export UPLOAD_PROFILE="--profile $UPLOAD_S3_PROFILE"
+    export DR_LOCAL_ACCESS_KEY_ID=$(aws --profile $DR_LOCAL_S3_PROFILE configure get aws_access_key_id | xargs)
+    export DR_LOCAL_SECRET_ACCESS_KEY=$(aws --profile $DR_LOCAL_S3_PROFILE configure get aws_secret_access_key | xargs)
+    DR_COMPOSE_FILE="$DR_COMPOSE_FILE:$DIR/docker/docker-compose-keys.yml"
+    export DR_UPLOAD_PROFILE="--profile $DR_UPLOAD_S3_PROFILE"
 fi
 
-export COMPOSE_FILE
-export LOCAL_PROFILE_ENDPOINT_URL
+export DR_COMPOSE_FILE
+export DR_LOCAL_PROFILE_ENDPOINT_URL
 
 function dr-upload-custom-files {
-  if [[ "${CLOUD,,}" == "azure" || "${CLOUD,,}" == "local" ]];
+  if [[ "${DR_CLOUD,,}" == "azure" || "${DR_CLOUD,,}" == "local" ]];
   then
-	  ROBOMAKER_COMMAND="" docker-compose $COMPOSE_FILES up -d minio
+	  ROBOMAKER_COMMAND="" docker-compose $DR_COMPOSE_FILES up -d minio
   fi
-  eval CUSTOM_TARGET=$(echo s3://$LOCAL_S3_BUCKET/$LOCAL_S3_CUSTOM_FILES_PREFIX/)
+  eval CUSTOM_TARGET=$(echo s3://$DR_LOCAL_S3_BUCKET/$DR_LOCAL_S3_CUSTOM_FILES_PREFIX/)
   echo "Uploading files to $CUSTOM_TARGET"
-  aws $LOCAL_PROFILE_ENDPOINT_URL s3 sync $DIR/custom_files/ $CUSTOM_TARGET
+  aws $DR_LOCAL_PROFILE_ENDPOINT_URL s3 sync $DIR/custom_files/ $CUSTOM_TARGET
 }
 
 function dr-upload-model {
@@ -65,13 +67,13 @@ function dr-set-upload-model {
 }
 
 function dr-download-custom-files {
-  if [[ "${CLOUD,,}" == "azure" || "${CLOUD,,}" == "local" ]];
+  if [[ "${DR_CLOUD,,}" == "azure" || "${DR_CLOUD,,}" == "local" ]];
   then
-	  ROBOMAKER_COMMAND="" docker-compose $COMPOSE_FILES up -d minio
+	  ROBOMAKER_COMMAND="" docker-compose $DR_COMPOSE_FILES up -d minio
   fi
-  eval CUSTOM_TARGET=$(echo s3://$LOCAL_S3_BUCKET/$LOCAL_S3_CUSTOM_FILES_PREFIX/)
+  eval CUSTOM_TARGET=$(echo s3://$DR_LOCAL_S3_BUCKET/$DR_LOCAL_S3_CUSTOM_FILES_PREFIX/)
   echo "Downloading files from $CUSTOM_TARGET"
-  aws $LOCAL_PROFILE_ENDPOINT_URL s3 sync $CUSTOM_TARGET $DIR/custom_files/
+  aws $DR_LOCAL_PROFILE_ENDPOINT_URL s3 sync $CUSTOM_TARGET $DIR/custom_files/
 }
 
 function dr-start-training {

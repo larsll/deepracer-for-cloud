@@ -7,8 +7,12 @@ function ctrl_c() {
         exit 1
 }
 
-while getopts ":m:c:" opt; do
+OPT_ARCH="gpu"
+
+while getopts ":m:c:a:" opt; do
 case $opt in
+a) OPT_ARCH="$OPTARG"
+;;
 m) OPT_MOUNT="$OPTARG"
 ;; 
 c) OPT_CLOUD="$OPTARG"
@@ -19,11 +23,14 @@ exit 1
 esac
 done
 
-GPUS=$(docker run --rm --gpus all nvidia/cuda:10.2-base nvidia-smi "-L" | awk  '/GPU .:/' | wc -l)
-if [ $? -ne 0 ] || [ $GPUS -eq 0 ]
+if [[ "${OPT_ARCH}" == "gpu" ]]
 then
-	echo "No GPU detected in docker. Please check setup".
-	exit 1
+    GPUS=$(docker run --rm --gpus all nvidia/cuda:10.2-base nvidia-smi "-L" | awk  '/GPU .:/' | wc -l)
+    if [ $? -ne 0 ] || [ $GPUS -eq 0 ]
+    then
+        echo "No GPU detected in docker. Please check setup".
+        exit 1
+    fi
 fi
 
 INSTALL_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." >/dev/null 2>&1 && pwd )"
@@ -69,8 +76,8 @@ done
 
 # Download docker images. Change to build statements if locally built images are desired.
 docker pull larsll/deepracer-rlcoach:v2
-docker pull awsdeepracercommunity/deepracer-robomaker:gpu
-docker pull awsdeepracercommunity/deepracer-sagemaker:gpu
+docker pull awsdeepracercommunity/deepracer-robomaker:$OPT_ARCH
+docker pull awsdeepracercommunity/deepracer-sagemaker:$OPT_ARCH
 docker pull larsll/deepracer-loganalysis:v2-cpu
 
 # create the network sagemaker-local if it doesn't exit
