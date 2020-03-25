@@ -91,7 +91,7 @@ fi
 REWARD_FILE=$(aws $DR_LOCAL_PROFILE_ENDPOINT_URL s3 cp s3://${SOURCE_S3_BUCKET}/${SOURCE_S3_REWARD} ${WORK_DIR} --no-progress | awk '/reward/ {print $4}'| xargs readlink -f 2> /dev/null)
 METADATA_FILE=$(aws $DR_LOCAL_PROFILE_ENDPOINT_URL s3 cp s3://${SOURCE_S3_BUCKET}/${SOURCE_S3_MODEL_PREFIX}/model/model_metadata.json ${WORK_DIR} --no-progress | awk '/model_metadata.json$/ {print $4}'| xargs readlink -f 2> /dev/null)
 HYPERPARAM_FILE=$(aws $DR_LOCAL_PROFILE_ENDPOINT_URL s3 cp s3://${SOURCE_S3_BUCKET}/${SOURCE_S3_MODEL_PREFIX}/ip/hyperparameters.json ${WORK_DIR} --no-progress | awk '/hyperparameters.json$/ {print $4}'| xargs readlink -f 2> /dev/null)
-METRICS_FILE=$(aws DR_$LOCAL_PROFILE_ENDPOINT_URL s3 cp s3://${SOURCE_S3_BUCKET}/${SOURCE_S3_METRICS} ${WORK_DIR} --no-progress | awk '/metric/ {print $4}'| xargs readlink -f 2> /dev/null)
+METRICS_FILE=$(aws $DR_LOCAL_PROFILE_ENDPOINT_URL s3 cp s3://${SOURCE_S3_BUCKET}/${SOURCE_S3_METRICS} ${WORK_DIR} --no-progress | awk '/metric/ {print $4}'| xargs readlink -f 2> /dev/null)
 
 if [ -n "$METADATA_FILE" ] && [ -n "$REWARD_FILE" ] && [ -n "$METRICS_FILE" ] && [ -n "$HYPERPARAM_FILE" ]; 
 then
