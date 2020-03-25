@@ -89,7 +89,7 @@ then
 fi
 
 # ensure our variables are set on startup
-echo "source $INSTALL_DIR/activate.sh" >> $HOME/.profile
+echo "source $INSTALL_DIR/bin/activate.sh" >> $HOME/.profile
 
 # mark as done
 date | tee $INSTALL_DIR/DONE
