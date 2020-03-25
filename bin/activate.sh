@@ -1,5 +1,6 @@
 #!/bin/bash
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+DIR="$( dirname $SCRIPT_DIR )"
 export DR_DIR=$DIR
 
 # create directory structure for docker volumes
@@ -11,7 +12,7 @@ sudo chown $(id -u):$(id -g) /mnt/deepracer
 
 if [[ -f "$DIR/current-run.env" ]]
 then
-  export $(grep -v '^#' $DIR/current-run.env | xargs)
+  dr-update-env
 else
   echo "File current-run.env does not exist."
   exit 1
