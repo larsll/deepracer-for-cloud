@@ -56,7 +56,7 @@ ln -sf $(eval echo "~${USER}")/.aws  $INSTALL_DIR/docker/volumes/
 mkdir -p $INSTALL_DIR/custom_files $INSTALL_DIR/logs $INSTALL_DIR/analysis
 cp $INSTALL_DIR/defaults/hyperparameters.json $INSTALL_DIR/custom_files/
 cp $INSTALL_DIR/defaults/model_metadata.json $INSTALL_DIR/custom_files/
-cp $INSTALL_DIR/defaults/rewards.py $INSTALL_DIR/custom_files/
+cp $INSTALL_DIR/defaults/reward_function.py $INSTALL_DIR/custom_files/
 
 cp $INSTALL_DIR/defaults/template-run.env $INSTALL_DIR/current-run.env
 if [[ -n "$OPT_CLOUD" ]];
