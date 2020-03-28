@@ -1,4 +1,19 @@
 #!/bin/bash
+function dr-update-env {
+  if [[ -f "$DIR/current-run.env" ]]
+  then
+    LINES=$(grep -v '^#' $DIR/current-run.env)
+    for l in $LINES; do
+      env_var=$(echo $l | cut -f1 -d\=)
+      env_val=$(echo $l | cut -f2 -d\=)
+      eval "export $env_var=$env_val"
+    done
+  else
+    echo "File current-run.env does not exist."
+    exit 1
+  fi
+}
+
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 DIR="$( dirname $SCRIPT_DIR )"
 export DR_DIR=$DIR
@@ -150,17 +165,4 @@ function dr-update {
    source $DIR/activate.sh
 }
 
-function dr-update-env {
-  if [[ -f "$DIR/current-run.env" ]]
-  then
-    LINES=$(grep -v '^#' $DIR/current-run.env)
-    for l in $LINES; do
-      env_var=$(echo $l | cut -f1 -d\=)
-      env_val=$(echo $l | cut -f2 -d\=)
-      eval "export $env_var=$env_val"
-    done
-  else
-    echo "File current-run.env does not exist."
-    exit 1
-  fi
-}
+
