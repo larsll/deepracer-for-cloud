@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-nvidia-docker run --rm -it -p "8888:8888" \
+docker run --rm -it -p "8888:8888" \
 -v `pwd`/../../logs:/workspace/logs \
 -v `pwd`/../../docker/volumes/.aws:/root/.aws \
 -v `pwd`/../../analysis:/workspace/analysis \

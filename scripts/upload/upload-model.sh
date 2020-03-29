@@ -5,7 +5,7 @@ usage(){
   echo "       -f        Force upload. No confirmation question."
   echo "       -w        Wipes the target AWS DeepRacer model structure before upload."
   echo "       -d        Dry-Run mode. Does not perform any write or delete operatios on target."
-  echo "       -c num    Uploads specified checkpoint. Default is last checkpoint."
+  echo "       -b        Uploads best checkpoint. Default is last checkpoint."
   echo "       -p model  Uploads model in specified S3 prefix."
 	exit 1
 }
@@ -17,9 +17,9 @@ function ctrl_c() {
         exit 1
 }
 
-while getopts ":fwdhc:p:" opt; do
+while getopts ":fwdhbp:" opt; do
 case $opt in
-c) OPT_CHECKPOINT="$OPTARG"
+b) OPT_CHECKPOINT="Best"
 ;; 
 f) OPT_FORCE="True"
 ;;
@@ -106,31 +106,30 @@ fi
 
 # Download checkpoint file
 echo "Looking for model to upload from s3://${SOURCE_S3_BUCKET}/${SOURCE_S3_MODEL_PREFIX}/"
-CHECKPOINT_FILE=$(aws ${DR_LOCAL_PROFILE_ENDPOINT_URL} s3 sync s3://${SOURCE_S3_BUCKET}/${SOURCE_S3_MODEL_PREFIX}/model/ ${WORK_DIR}model --exclude "*" --include ".coach_checkpoint" --no-progress | awk '{print $4}' | xargs readlink -f 2> /dev/null) 
+CHECKPOINT_INDEX=$(aws ${DR_LOCAL_PROFILE_ENDPOINT_URL} s3 cp s3://${SOURCE_S3_BUCKET}/${SOURCE_S3_MODEL_PREFIX}/model/deepracer_checkpoints.json ${WORK_DIR}model/ --no-progress | awk '{print $4}' | xargs readlink -f 2> /dev/null) 
 
-if [ -z "$CHECKPOINT_FILE" ]; then
+if [ -z "$CHECKPOINT_INDEX" ]; then
   echo "No checkpoint file available at s3://${SOURCE_S3_BUCKET}/${SOURCE_S3_MODEL_PREFIX}/model. Exiting."
   exit 1
 fi
 
 if [ -z "$OPT_CHECKPOINT" ]; then
-  echo "Checkpoint not supplied, checking for latest checkpoint"
-
-  FIRST_LINE=$(head -n 1 $CHECKPOINT_FILE)
-  CHECKPOINT_PREFIX=$(echo $FIRST_LINE | sed "s/[model_checkpoint_path: [^ ]*//" | sed "s/^\([\"']\)\(.*\)\1\$/\2/g")
-  CHECKPOINT=`echo $CHECKPOINT_PREFIX | sed 's/[_][^ ]*//'`
-  echo "Latest checkpoint = "$CHECKPOINT
+  echo "Checking for latest checkpoint"
+  CHECKPOINT_FILE=`jq -r .last_checkpoint.name < $CHECKPOINT_INDEX`
+  CHECKPOINT=`echo $CHECKPOINT_FILE | cut -f1 -d_`
+  echo "Latest checkpoint = $CHECKPOINT"
 else
-  CHECKPOINT="${OPT_CHECKPOINT}" 
-  CHECKPOINT_PREFIX=$(cat $CHECKPOINT_FILE | grep "all_model_checkpoint_paths: \"$CHECKPOINT" | sed "s/[all_model_checkpoint_paths: [^ ]*//"  | sed "s/^\([\"']\)\(.*\)\1\$/\2/g")
-  echo "Checkpoint supplied: ["${CHECKPOINT}"]"
+  echo "Checking for best checkpoint"
+  CHECKPOINT_FILE=`jq -r .best_checkpoint.name < $CHECKPOINT_INDEX`
+  CHECKPOINT=`echo $CHECKPOINT_FILE | cut -f1 -d_`
+  echo "Best checkpoint: $CHECKPOINT"
 fi
 
 # Find checkpoint & model files - download
-if [ -n "$CHECKPOINT_PREFIX" ]; then
-    CHECKPOINT_MODEL_FILES=$(aws ${DR_LOCAL_PROFILE_ENDPOINT_URL} s3 sync s3://${SOURCE_S3_BUCKET}/${SOURCE_S3_MODEL_PREFIX}/model/ ${WORK_DIR}model/ --exclude "*" --include "${CHECKPOINT_PREFIX}*" --include "model_${CHECKPOINT}.pb" --include "deepracer_checkpoints.json" --no-progress | awk '{print $4}' | xargs readlink -f)
+if [ -n "$CHECKPOINT" ]; then
+    CHECKPOINT_MODEL_FILES=$(aws ${DR_LOCAL_PROFILE_ENDPOINT_URL} s3 sync s3://${SOURCE_S3_BUCKET}/${SOURCE_S3_MODEL_PREFIX}/model/ ${WORK_DIR}model/ --exclude "*" --include "${CHECKPOINT}*" --include "model_${CHECKPOINT}.pb" --include "deepracer_checkpoints.json" --no-progress | awk '{print $4}' | xargs readlink -f)
     cp ${METADATA_FILE} ${WORK_DIR}model/
-    echo "model_checkpoint_path: \"${CHECKPOINT_PREFIX}\"" | tee ${WORK_DIR}model/checkpoint
+    echo "model_checkpoint_path: \"${CHECKPOINT_FILE}\"" | tee ${WORK_DIR}model/checkpoint
 else
     echo "Checkpoint not found. Exiting."
     exit 1
