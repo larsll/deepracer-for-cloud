@@ -147,7 +147,7 @@ function dr-logs-robomaker {
 }
 
 function dr-logs-loganalysis {
-  eval LOG_ANALYSIS_ID=$(docker ps | awk ' /log-analysis/ { print $1 }')
+  eval LOG_ANALYSIS_ID=$(docker ps | awk ' /loganalysis/ { print $1 }')
   if [ -n "$LOG_ANALYSIS_ID" ]; then
     docker logs -f $LOG_ANALYSIS_ID
   else
