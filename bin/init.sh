@@ -76,7 +76,7 @@ done
 
 # Download docker images. Change to build statements if locally built images are desired.
 docker pull larsll/deepracer-rlcoach:v2
-docker pull awsdeepracercommunity/deepracer-robomaker:$OPT_ARCH
+docker pull awsdeepracercommunity/deepracer-robomaker:cpu
 docker pull awsdeepracercommunity/deepracer-sagemaker:$OPT_ARCH
 docker pull larsll/deepracer-loganalysis:v2-cpu
 
