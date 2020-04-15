@@ -64,6 +64,13 @@ then
     sed -i "s/<CLOUD_REPLACE>/$OPT_CLOUD/g" $INSTALL_DIR/current-run.env
 fi
 
+if [[ "${OPT_ARCH}" == "gpu" ]];
+then
+    sed -i "s/<ARCH_REPLACE>/True/g" $INSTALL_DIR/current-run.env
+else
+    sed -i "s/<ARCH_REPLACE>/False/g" $INSTALL_DIR/current-run.env
+fi
+
 #set proxys if required
 for arg in "$@";
 do
