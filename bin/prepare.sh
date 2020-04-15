@@ -21,7 +21,10 @@ echo "Detected cloud type ${CLOUD_NAME}"
 GPUS=$(lspci | awk '/NVIDIA/ && /3D controller/' | wc -l)
 if [ $? -ne 0 ] || [ $GPUS -eq 0 ];
 then
+	ARCH="cpu"
         echo "No NVIDIA GPU detected. Will not install drivers."
+else
+	ARCH="gpu"
 fi
 
 ## Do I have an additional disk for Docker images - looking for /dev/sdc (Azure)
@@ -87,7 +90,7 @@ then
 fi
 
 ## Adding Nvidia Drivers
-if [ $GPUS -eq 0 ];
+if [[ "${ARCH}" == "gpu" ]];
 then
 	sudo apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub
 	sudo bash -c 'echo "deb http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64 /" > /etc/apt/sources.list.d/cuda.list'
@@ -103,7 +106,7 @@ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 sudo add-apt-repository    "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 sudo apt-get update && apt-get install -y docker-ce docker-ce-cli containerd.io
 
-if [ $GPUS -eq 0 ];
+if [[ "${ARCH}" == "gpu" ]];
 then
 	distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
 	curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
@@ -124,13 +127,6 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 ## Reboot to load driver -- continue install if in cloud-init
 CLOUD_INIT=$(pstree -s $BASHPID | awk /cloud-init/ | wc -l)
-
-if [ $GPUS -eq 0 ];
-then
-    ARCH="gpu"
-else
-    ARCH="cpu"
-fi
 
 if [[ "$CLOUD_INIT" -ne 0 ]];
 then
