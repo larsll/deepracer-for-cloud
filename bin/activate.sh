@@ -26,6 +26,12 @@ function dr-update-env {
     echo "File run.env does not exist."
     exit 1
   fi
+
+  if [[ -z "${DR_RUN_ID}" ]]; then
+    export DR_RUN_ID=0
+  fi
+  export DR_ROBOMAKER_PORT=$(echo "8080 + $DR_RUN_ID" | bc)
+
 }
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
@@ -181,7 +187,11 @@ function dr-clean-local {
 }
 
 function dr-update {
-   source $DIR/activate.sh
+   dr-update-env
+}
+
+function dr-reload {
+   source $DIR/bin/activate.sh
 }
 
 

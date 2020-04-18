@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 export COMPOSE_FILE=$DR_COMPOSE_FILE
-docker-compose down
+docker-compose stop rl_coach
+docker-compose stop robomaker
 
 SAGEMAKER=$(docker ps | awk ' /sagemaker/ { print $1 }')
 if [[ -n $SAGEMAKER ]];
