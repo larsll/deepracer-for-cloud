@@ -94,7 +94,7 @@ else
         fi
     done
 
-    CONFIG_FILE=$(echo $DR_DIR/current-run.env)
+    CONFIG_FILE=$DR_CONFIG
     echo "Configuration file $CONFIG_FILE will be updated."
     if [[ -n "${MODEL_NAME}" ]];
     then

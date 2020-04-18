@@ -1,15 +1,29 @@
 #!/bin/bash
 function dr-update-env {
-  if [[ -f "$DIR/current-run.env" ]]
+
+  if [[ -f "$DIR/system.env" ]]
   then
-    LINES=$(grep -v '^#' $DIR/current-run.env)
+    LINES=$(grep -v '^#' $DIR/system.env)
     for l in $LINES; do
       env_var=$(echo $l | cut -f1 -d\=)
       env_val=$(echo $l | cut -f2 -d\=)
       eval "export $env_var=$env_val"
     done
   else
-    echo "File current-run.env does not exist."
+    echo "File system.env does not exist."
+    exit 1
+  fi
+
+  if [[ -f "$DR_CONFIG" ]]
+  then
+    LINES=$(grep -v '^#' $DR_CONFIG)
+    for l in $LINES; do
+      env_var=$(echo $l | cut -f1 -d\=)
+      env_val=$(echo $l | cut -f2 -d\=)
+      eval "export $env_var=$env_val"
+    done
+  else
+    echo "File run.env does not exist."
     exit 1
   fi
 }
@@ -25,11 +39,16 @@ fi
 sudo mkdir -p /mnt/deepracer /mnt/deepracer/recording
 sudo chown $(id -u):$(id -g) /mnt/deepracer 
 
-if [[ -f "$DIR/current-run.env" ]]
+if [[ -f "$1" ]];
 then
+  export DR_CONFIG=$(readlink -f $1)
+
+elif [[ -f "$DIR/run.env" ]];
+then
+  export DR_CONFIG="$DIR/run.env"
   dr-update-env
 else
-  echo "File current-run.env does not exist."
+  echo "No configuration file."
   exit 1
 fi
 

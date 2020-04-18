@@ -9,7 +9,7 @@ services:
   rl_coach:
     image: larsll/deepracer-rlcoach:v2
     environment:
-      - GPU_AVAILABLE=${DR_GPU_AVAILABLE}
+      - SAGEMAKER_IMAGE=${DR_SAGEMAKER_IMAGE}
       - PRETRAINED=${DR_LOCAL_S3_PRETRAINED}
       - PRETRAINED_S3_PREFIX=${DR_LOCAL_S3_PRETRAINED_PREFIX}
       - PRETRAINED_S3_BUCKET=${DR_LOCAL_S3_BUCKET}
@@ -20,7 +20,7 @@ services:
     - '//var/run/docker.sock:/var/run/docker.sock'
     - '/robo/container:/robo/container'
   robomaker:
-    image: awsdeepracercommunity/deepracer-robomaker:${DR_ROBOMAKER_IMAGE_TYPE}
+    image: awsdeepracercommunity/deepracer-robomaker:${DR_ROBOMAKER_IMAGE}
     command: ["${ROBOMAKER_COMMAND}"]
     volumes:
       - /mnt/deepracer/recording:/mnt/recording
