@@ -13,9 +13,6 @@ Main differences to the work done by Alex is:
 	* `system.env` contains system-wide constants (expected to be configured only at setup)
 	* `run.env` contains user session configuration (pretraining, track etc.) as well as information about where to upload your model (S3 bucket and prefix).
 	* `docker/.env` remains the home for more static configuration. This is not expected to change between sessions.
-* Runtime storage: Uses `/mnt` to store robomaker files (checkpoints, logs); depending on setup these will normally be deleted between runs, but Azure and AWS provides 200+ GB free storage which is very suitable for this purpuse. Archiving of logs and additional checkpoint files required if desired. (Update: as of V2 this is less important as the robomaker is now cleaning up on itsown)
-	* Azure: Uses the normal temporary drive which is mounted on /mnt by default.
-	* AWS: Preparation scripts mounts the ephemeral drive on /mnt
 
 ## Requirements
 
@@ -60,8 +57,6 @@ For local install it is recommended *not* to run the `bin/prepare.sh` script; it
 ## Environment Setup
 
 The environment is set via the `CLOUD` parameter in `system.env`; it can be `Azure`, `AWS` or `Local`. It is case-insensitive. Depending on the value the virtual or native S3 instance will be configured accordingly.
-
-Note: If in the `bin/prepare.sh` script then the working directory `/mnt/deepracer` will be provided based on the temporary storage partitions made available. If you want to provision the working directory in a different fashion then just ensure that a volume is mounted on `/mnt` or `/mnt/deepracer` with sufficient storage.
 
 ### AWS
 
@@ -118,7 +113,7 @@ If you want to use awscli (`aws`) to manually move files then use `aws $DR_LOCAL
 
 ### Local
 
-Local mode runs a minio server that hosts the data in the `/mnt/deepracer` partition. It is otherwise command-compatible with the Azure setup; as the data is accessible via Minio and not via native S3.
+Local mode runs a minio server that hosts the data in the `docker/volumes` directory. It is otherwise command-compatible with the Azure setup; as the data is accessible via Minio and not via native S3.
 
 ### Environment Variables
 The scripts assume that two files `systen.env` containing constant configuration values and  `run.env` with run specific values is populated with the required values.

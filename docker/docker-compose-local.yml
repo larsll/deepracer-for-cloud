@@ -12,7 +12,7 @@ services:
       - MINIO_ACCESS_KEY=${DR_LOCAL_ACCESS_KEY_ID}
       - MINIO_SECRET_KEY=${DR_LOCAL_SECRET_ACCESS_KEY}
     volumes:
-      - /mnt/deepracer/minio:/data
+      - ${DR_DIR}/docker/volumes/minio:/data
   rl_coach:
     environment:
       - S3_ENDPOINT_URL=http://minio:9000

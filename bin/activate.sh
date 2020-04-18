@@ -38,13 +38,6 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 DIR="$( dirname $SCRIPT_DIR )"
 export DR_DIR=$DIR
 
-# create directory structure for docker volumes
-if [[ $(mount | grep /mnt | wc -l) -ne 0 ]]; then
-  mount /mnt
-fi
-sudo mkdir -p /mnt/deepracer /mnt/deepracer/recording
-sudo chown $(id -u):$(id -g) /mnt/deepracer 
-
 if [[ -f "$1" ]];
 then
   export DR_CONFIG=$(readlink -f $1)
@@ -62,15 +55,15 @@ if [[ "${DR_CLOUD,,}" == "azure" ]];
 then
     export DR_LOCAL_S3_ENDPOINT_URL="http://localhost:9000"
     DR_LOCAL_PROFILE_ENDPOINT_URL="--profile $DR_LOCAL_S3_PROFILE --endpoint-url $DR_LOCAL_ENDPOINT_URL"
-    DR_COMPOSE_FILE="$DIR/docker/docker-compose.yml:$DIR/docker/docker-compose-azure.yml"
+    DR_COMPOSE_FILE="-c $DIR/docker/docker-compose.yml -c $DIR/docker/docker-compose-azure.yml"
 elif [[ "${DR_CLOUD,,}" == "local" ]];
 then
     export DR_LOCAL_S3_ENDPOINT_URL="http://localhost:9000"
     DR_LOCAL_PROFILE_ENDPOINT_URL="--profile $DR_LOCAL_S3_PROFILE --endpoint-url $DR_LOCAL_ENDPOINT_URL"
-    DR_COMPOSE_FILE="$DIR/docker/docker-compose.yml:$DIR/docker/docker-compose-local.yml"
+    DR_COMPOSE_FILE="-c $DIR/docker/docker-compose.yml -c $DIR/docker/docker-compose-local.yml"
 else
     DR_LOCAL_PROFILE_ENDPOINT_URL=""
-    DR_COMPOSE_FILE="$DIR/docker/docker-compose.yml"
+    DR_COMPOSE_FILE="-c $DIR/docker/docker-compose.yml"
 fi
 
 ## Check if we have an AWS IAM assumed role, or if we need to set specific credentials.

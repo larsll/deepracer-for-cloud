@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-export COMPOSE_FILE=$DR_COMPOSE_FILE
-docker-compose stop rl_coach
-docker-compose stop robomaker
+
+export STACK_NAME="deepracer-$DR_RUN_ID"
+docker stack rm $STACK_NAME
 
 SAGEMAKER=$(docker ps | awk ' /sagemaker/ { print $1 }')
 if [[ -n $SAGEMAKER ]];

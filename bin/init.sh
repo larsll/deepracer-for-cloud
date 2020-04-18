@@ -59,14 +59,9 @@ INSTALL_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." >/dev/null 2>&1 && pwd 
 cd $INSTALL_DIR
 
 # create directory structure for docker volumes
-
-if [[ -n "$OPT_MOUNT" ]];
-then
-    mount "${OPT_MOUNT}"
-fi
-sudo mkdir -p /mnt/deepracer /mnt/deepracer/recording /mnt/deepracer/robo/checkpoint /mnt/deepracer/minio/bucket
-sudo chown -R $(id -u):$(id -g) /mnt/deepracer 
-mkdir -p $INSTALL_DIR/docker/volumes
+mkdir -p $INSTALL_DIR/tmp $INSTALL_DIR/tmp/recording
+mkdir -p $INSTALL_DIR/docker/volumes $INSTALL_DIR/docker/volumes/minio/bucket 
+sudo mkdir -p /tmp/sagemaker
 
 # create symlink to current user's home .aws directory 
 # NOTE: AWS cli must be installed for this to work
@@ -119,17 +114,18 @@ do
 done
 
 # Download docker images. Change to build statements if locally built images are desired.
-docker pull larsll/deepracer-rlcoach:v2
+docker pull larsll/deepracer-rlcoach:v2.1
 docker pull awsdeepracercommunity/deepracer-robomaker:$CPU_LEVEL
 docker pull awsdeepracercommunity/deepracer-sagemaker:$SAGEMAKER_TAG
 docker pull larsll/deepracer-loganalysis:v2-cpu
 
 # create the network sagemaker-local if it doesn't exit
 SAGEMAKER_NW='sagemaker-local'
+docker swarm init
 docker network ls | grep -q $SAGEMAKER_NW
 if [ $? -ne 0 ]
 then
-	  docker network create $SAGEMAKER_NW
+    docker network create $SAGEMAKER_NW -d overlay --attachable --scope swarm
 fi
 
 # ensure our variables are set on startup

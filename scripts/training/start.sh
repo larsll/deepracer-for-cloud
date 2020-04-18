@@ -43,9 +43,10 @@ fi
 echo "Creating Robomaker configuration in $S3_PATH/training_params.yaml"
 python3 prepare-config.py
 
-export ROBOMAKER_COMMAND="./run.sh build distributed_training.launch"
-export COMPOSE_FILE=$DR_COMPOSE_FILE
-docker-compose up -d
+export ROBOMAKER_CMMAND="./run.sh build distributed_training.launch"
+export COMPOSE_FILES=$DR_COMPOSE_FILE
+export STACK_NAME="deepracer-$DR_RUN_ID"
+docker stack deploy $COMPOSE_FILES $STACK_NAME
 echo 'Waiting for containers to start up...'
 
 #sleep for 20 seconds to allow the containers to start

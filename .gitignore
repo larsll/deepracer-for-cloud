@@ -9,3 +9,4 @@ run.env
 *.bak
 system.env
 DONE
+tmp/
