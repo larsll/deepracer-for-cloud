@@ -12,9 +12,10 @@ then
         CONTAINER_PREFIX=$(echo $CONTAINER_NAME | perl -n -e'/(.*)_(algo(.*))_./; print $1')
         COMPOSE_SERVICE_NAME=$(echo $CONTAINER_NAME | perl -n -e'/(.*)_(algo(.*))_./; print $2')
         COMPOSE_FILE=$(sudo find /tmp/sagemaker -name docker-compose.yaml -exec grep -l "$RUN_NAME" {} + | grep $CONTAINER_PREFIX)
-        sudo docker-compose -f $COMPOSE_FILE stop $COMPOSE_SERVICE_NAME
-    #docker stop $(docker ps | awk ' /sagemaker/ { print $1 }')
-    #docker rm $(docker ps -a | awk ' /sagemaker/ { print $1 }')
+        if [[ -n $COMPOSE_FILE ]]; then
+            sudo docker-compose -f $COMPOSE_FILE stop $COMPOSE_SERVICE_NAME
+            docker container rm $CONTAINER
+        fi
     done
 fi
 
