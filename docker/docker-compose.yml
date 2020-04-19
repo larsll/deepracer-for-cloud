@@ -23,10 +23,9 @@ services:
   robomaker:
     image: awsdeepracercommunity/deepracer-robomaker:${DR_ROBOMAKER_IMAGE}
     command: ["${ROBOMAKER_COMMAND}"]
-    volumes:
       - "${DR_DIR}/tmp/recording:/mnt/recording"
     ports:
-      - "8080:${DR_ROBOMAKER_PORT}"
+      - "${DR_ROBOMAKER_PORT}:8080"
     environment:
       - XAUTHORITY=/root/.Xauthority
       - DISPLAY_N=:0
