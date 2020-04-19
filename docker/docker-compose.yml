@@ -24,7 +24,7 @@ services:
     image: awsdeepracercommunity/deepracer-robomaker:${DR_ROBOMAKER_IMAGE}
     command: ["${ROBOMAKER_COMMAND}"]
     volumes:
-      - ${DR_DIR}/tmp/recording:/mnt/recording
+      - "${DR_DIR}/tmp/recording:/mnt/recording"
     ports:
       - "8080:${DR_ROBOMAKER_PORT}"
     environment:
