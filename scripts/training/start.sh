@@ -78,5 +78,5 @@ then
   fi
 else
   echo "No display. Falling back to CLI mode."
-  docker logs -f $(docker ps | awk ' /sagemaker/ { print $1 }')
+  dr-logs-sagemaker
 fi
