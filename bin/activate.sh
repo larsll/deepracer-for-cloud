@@ -192,8 +192,9 @@ function dr-logs-loganalysis {
 function dr-loganalysis-url {
   eval LOG_ANALYSIS_ID=$(docker ps | awk ' /loganalysis/ { print $1 }')
   if [ -n "$LOG_ANALYSIS_ID" ]; then
-    URL=$(docker logs $LOG_ANALYSIS_ID | perl -n -e'/(http:\/\/127\.0\.0\.1\:8888\/\?.*)/; print $1')
-    echo "Log-analysis URL: $URL"
+    eval URL=$(docker logs $LOG_ANALYSIS_ID | perl -n -e'/(http:\/\/127\.0\.0\.1\:8888\/\?.*)/; print $1')
+    echo "Log-analysis URL:"
+    echo $URL
   else
     echo "Log-analysis is not running."
   fi
