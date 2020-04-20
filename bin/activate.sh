@@ -41,7 +41,7 @@ export DR_DIR=$DIR
 if [[ -f "$1" ]];
 then
   export DR_CONFIG=$(readlink -f $1)
-
+  dr-update-env
 elif [[ -f "$DIR/run.env" ]];
 then
   export DR_CONFIG="$DIR/run.env"
@@ -156,7 +156,7 @@ function dr-logs-sagemaker {
 }
 
 function dr-logs-robomaker {
-    eval ROBOMAKER_ID=$(docker ps | awk ' /robomaker/ { print $1 }')
+    eval ROBOMAKER_ID=$(docker ps | grep "deepracer-$DR_RUN_ID_robomaker" | cut -f1 -d\  | head -1)
     if [ -n "$ROBOMAKER_ID" ]; then
         docker logs -f $ROBOMAKER_ID
     else
@@ -171,12 +171,7 @@ function dr-logs-loganalysis {
   else
     echo "Log-analysis is not running."
   fi
-  
-}
 
-function dr-clean-local {
-  dr-stop-training
-  sudo rm -rf /robo/* 
 }
 
 function dr-update {
@@ -184,7 +179,7 @@ function dr-update {
 }
 
 function dr-reload {
-   source $DIR/bin/activate.sh
+   source $DIR/bin/activate.sh $DR_CONFIG
 }
 
 
