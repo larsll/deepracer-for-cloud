@@ -171,7 +171,7 @@ function dr-logs-sagemaker {
 }
 
 function dr-logs-robomaker {
-    eval ROBOMAKER_ID=$(docker ps | grep "deepracer-$DR_RUN_ID_robomaker" | cut -f1 -d\  | head -1)
+    eval ROBOMAKER_ID=$(docker ps | grep "deepracer-${DR_RUN_ID}_robomaker" | cut -f1 -d\  | head -1)
     if [ -n "$ROBOMAKER_ID" ]; then
         docker logs -f $ROBOMAKER_ID
     else
