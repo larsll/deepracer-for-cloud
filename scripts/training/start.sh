@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+source $DR_DIR/bin/scripts_wrapper.sh
+
 usage(){
 	echo "Usage: $0 [-w]"
   echo "       -w        Wipes the target AWS DeepRacer model structure before upload."
