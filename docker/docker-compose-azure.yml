@@ -1,5 +1,10 @@
 version: '3.7'
 
+networks:
+  default:
+    external: true
+    name: sagemaker-local
+
 services:
   minio:
     image: minio/minio
@@ -7,7 +12,6 @@ services:
       - "9000:9000"
     container_name: minio
     command: gateway azure
-    restart: unless-stopped
     environment:
       - MINIO_ACCESS_KEY=${DR_LOCAL_ACCESS_KEY_ID}
       - MINIO_SECRET_KEY=${DR_LOCAL_SECRET_ACCESS_KEY}

@@ -69,7 +69,7 @@ else
 fi
 
 if [[ -n "${DR_MINIO_COMPOSE_FILE}" ]]; then
-    docker stack deploy $DR_MINIO_COMPOSE_FILE minio
+    docker stack deploy $DR_MINIO_COMPOSE_FILE s3
 fi
 
 

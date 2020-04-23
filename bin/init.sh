@@ -87,8 +87,11 @@ if [[ "${OPT_CLOUD}" == "aws" ]]; then
     else
         sed -i "s/<AWS_DR_BUCKET>/not-defined/g" $INSTALL_DIR/system.env
     fi
+    sed -i "s/<LOCAL_PROFILE>/default/g" $INSTALL_DIR/system.env
 else
     AWS_REGION="us-east-1"
+    sed -i "s/<LOCAL_PROFILE>/minio/g" $INSTALL_DIR/system.env
+    echo "Please run 'aws configure --profile minio' to set the credentials"
 fi
 
 sed -i "s/<CLOUD_REPLACE>/$OPT_CLOUD/g" $INSTALL_DIR/system.env
