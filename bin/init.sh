@@ -84,6 +84,8 @@ if [[ "${OPT_CLOUD}" == "aws" ]]; then
     AWS_REGION="`echo \"$AWS_EC2_AVAIL_ZONE\" | sed 's/[a-z]$//'`"
     if [[ !  -z "${AWS_DR_BUCKET}" ]]; then
         sed -i "s/<AWS_DR_BUCKET>/$AWS_DR_BUCKET/g" $INSTALL_DIR/system.env
+    else
+        sed -i "s/<AWS_DR_BUCKET>/not-defined/g" $INSTALL_DIR/system.env
     fi
 else
     AWS_REGION="us-east-1"
