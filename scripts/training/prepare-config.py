@@ -37,10 +37,11 @@ s3_endpoint_url = os.environ.get('DR_LOCAL_S3_ENDPOINT_URL', None)
 s3_region = config['AWS_REGION']
 s3_bucket = config['SAGEMAKER_SHARED_S3_BUCKET']
 s3_prefix = config['SAGEMAKER_SHARED_S3_PREFIX']
+s3_profile = os.environ.get('DR_LOCAL_S3_PROFILE', 'default')
 s3_yaml_name = os.environ.get('DR_LOCAL_S3_PARAMS_FILE', 'training_params.yaml')
 yaml_key = os.path.normpath(os.path.join(s3_prefix, s3_yaml_name))
 
-session = boto3.session.Session()
+session = boto3.session.Session(profile_name=s3_profile)
 s3_client = session.client('s3', region_name=s3_region, endpoint_url=s3_endpoint_url)
 
 yaml_key = os.path.normpath(os.path.join(s3_prefix, s3_yaml_name))

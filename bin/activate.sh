@@ -73,7 +73,7 @@ if [ $(aws sts get-caller-identity | jq '.Arn' | awk /assumed-role/ | wc -l) -eq
 then
     export DR_LOCAL_ACCESS_KEY_ID=$(aws --profile $DR_LOCAL_S3_PROFILE configure get aws_access_key_id | xargs)
     export DR_LOCAL_SECRET_ACCESS_KEY=$(aws --profile $DR_LOCAL_S3_PROFILE configure get aws_secret_access_key | xargs)
-    DR_COMPOSE_FILE="$DR_COMPOSE_FILE:$DIR/docker/docker-compose-keys.yml"
+    DR_COMPOSE_FILE="$DR_COMPOSE_FILE -c $DIR/docker/docker-compose-keys.yml"
     export DR_UPLOAD_PROFILE="--profile $DR_UPLOAD_S3_PROFILE"
 fi
 
