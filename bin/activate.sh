@@ -68,11 +68,6 @@ else
     DR_COMPOSE_FILE="-c $DIR/docker/docker-compose.yml"
 fi
 
-if [[ -n "${DR_MINIO_COMPOSE_FILE}" ]]; then
-    docker stack deploy $DR_MINIO_COMPOSE_FILE s3
-fi
-
-
 ## Check if we have an AWS IAM assumed role, or if we need to set specific credentials.
 if [ $(aws sts get-caller-identity | jq '.Arn' | awk /assumed-role/ | wc -l) -eq 0 ];
 then
@@ -84,6 +79,10 @@ fi
 
 export DR_COMPOSE_FILE
 export DR_LOCAL_PROFILE_ENDPOINT_URL
+
+if [[ -n "${DR_MINIO_COMPOSE_FILE}" ]]; then
+    docker stack deploy $DR_MINIO_COMPOSE_FILE s3
+fi
 
 source $SCRIPT_DIR/scripts_wrapper.sh
 
