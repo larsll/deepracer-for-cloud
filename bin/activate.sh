@@ -56,13 +56,13 @@ then
     export DR_LOCAL_S3_ENDPOINT_URL="http://localhost:9000"
     DR_LOCAL_PROFILE_ENDPOINT_URL="--profile $DR_LOCAL_S3_PROFILE --endpoint-url $DR_LOCAL_S3_ENDPOINT_URL"
     DR_COMPOSE_FILE="-c $DIR/docker/docker-compose.yml -c $DIR/docker/docker-compose-endpoint.yml"
-    DR_MINIO_COMPOSE_FILE="-c $DIR/docker/docker-compose-azure.yaml"
+    DR_MINIO_COMPOSE_FILE="-c $DIR/docker/docker-compose-azure.yml"
 elif [[ "${DR_CLOUD,,}" == "local" ]];
 then
     export DR_LOCAL_S3_ENDPOINT_URL="http://localhost:9000"
     DR_LOCAL_PROFILE_ENDPOINT_URL="--profile $DR_LOCAL_S3_PROFILE --endpoint-url $DR_LOCAL_S3_ENDPOINT_URL"
     DR_COMPOSE_FILE="-c $DIR/docker/docker-compose.yml -c $DIR/docker/docker-compose-endpoint.yml"
-    DR_MINIO_COMPOSE_FILE="-c $DIR/docker/docker-compose-local.yaml"
+    DR_MINIO_COMPOSE_FILE="-c $DIR/docker/docker-compose-local.yml"
 else
     DR_LOCAL_PROFILE_ENDPOINT_URL=""
     DR_COMPOSE_FILE="-c $DIR/docker/docker-compose.yml"
