@@ -4,7 +4,7 @@ networks:
   default:
     external: true
     name: sagemaker-local
-    
+
 services:
   minio:
     image: minio/minio
@@ -14,6 +14,10 @@ services:
     environment:
       - MINIO_ACCESS_KEY=${DR_LOCAL_ACCESS_KEY_ID}
       - MINIO_SECRET_KEY=${DR_LOCAL_SECRET_ACCESS_KEY}
+      - MINIO_UID
+      - MINIO_GID
+      - MINIO_USERNAME
+      - MINIO_GROUPNAME
     volumes:
       - ${DR_DIR}/docker/volumes/minio:/data
 

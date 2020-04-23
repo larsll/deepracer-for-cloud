@@ -81,6 +81,10 @@ export DR_COMPOSE_FILE
 export DR_LOCAL_PROFILE_ENDPOINT_URL
 
 if [[ -n "${DR_MINIO_COMPOSE_FILE}" ]]; then
+    export MINIO_UID=$(id -u)
+    export MINIO_USERNAME=$(id -u -n)
+    export MINIO_GID=$(id -g)
+    export MINIO_GROUPNAME=$(id -g -n)
     docker stack deploy $DR_MINIO_COMPOSE_FILE s3
 fi
 
