@@ -13,11 +13,4 @@ services:
       - MINIO_SECRET_KEY=${DR_LOCAL_SECRET_ACCESS_KEY}
       - AWS_ACCESS_KEY_ID=${DR_LOCAL_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${DR_LOCAL_SECRET_ACCESS_KEY}
-  rl_coach:
-    environment:
-      - S3_ENDPOINT_URL=http://minio:9000
-    depends_on:
-      - minio
-  robomaker:
-    environment:
-      - S3_ENDPOINT_URL=http://minio:9000
+

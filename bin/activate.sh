@@ -55,16 +55,23 @@ if [[ "${DR_CLOUD,,}" == "azure" ]];
 then
     export DR_LOCAL_S3_ENDPOINT_URL="http://localhost:9000"
     DR_LOCAL_PROFILE_ENDPOINT_URL="--profile $DR_LOCAL_S3_PROFILE --endpoint-url $DR_LOCAL_S3_ENDPOINT_URL"
-    DR_COMPOSE_FILE="-c $DIR/docker/docker-compose.yml -c $DIR/docker/docker-compose-azure.yml"
+    DR_COMPOSE_FILE="-c $DIR/docker/docker-compose.yml -c $DIR/docker/docker-compose-endpoint.yml"
+    DR_MINIO_COMPOSE_FILE="-c $DIR/docker/docker-compose-azure.yaml"
 elif [[ "${DR_CLOUD,,}" == "local" ]];
 then
     export DR_LOCAL_S3_ENDPOINT_URL="http://localhost:9000"
     DR_LOCAL_PROFILE_ENDPOINT_URL="--profile $DR_LOCAL_S3_PROFILE --endpoint-url $DR_LOCAL_S3_ENDPOINT_URL"
-    DR_COMPOSE_FILE="-c $DIR/docker/docker-compose.yml -c $DIR/docker/docker-compose-local.yml"
+    DR_COMPOSE_FILE="-c $DIR/docker/docker-compose.yml -c $DIR/docker/docker-compose-endpoint.yml"
+    DR_MINIO_COMPOSE_FILE="-c $DIR/docker/docker-compose-local.yaml"
 else
     DR_LOCAL_PROFILE_ENDPOINT_URL=""
     DR_COMPOSE_FILE="-c $DIR/docker/docker-compose.yml"
 fi
+
+if [[ -n "${DR_MINIO_COMPOSE_FILE}" ]]; then
+    docker stack deploy $DR_MINIO_COMPOSE_FILE minio
+fi
+
 
 ## Check if we have an AWS IAM assumed role, or if we need to set specific credentials.
 if [ $(aws sts get-caller-identity | jq '.Arn' | awk /assumed-role/ | wc -l) -eq 0 ];
