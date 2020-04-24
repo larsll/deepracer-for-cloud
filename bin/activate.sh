@@ -75,6 +75,9 @@ then
     export DR_LOCAL_SECRET_ACCESS_KEY=$(aws --profile $DR_LOCAL_S3_PROFILE configure get aws_secret_access_key | xargs)
     DR_COMPOSE_FILE="$DR_COMPOSE_FILE -c $DIR/docker/docker-compose-keys.yml"
     export DR_UPLOAD_PROFILE="--profile $DR_UPLOAD_S3_PROFILE"
+    export DR_LOCAL_S3_AUTH_MODE="profile"
+else 
+    export DR_LOCAL_S3_AUTH_MODE="role"
 fi
 
 export DR_COMPOSE_FILE
