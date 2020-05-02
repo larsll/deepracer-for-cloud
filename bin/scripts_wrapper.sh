@@ -101,6 +101,15 @@ function dr-logs-robomaker {
     fi
 }
 
+function dr-logs-robomaker-debug {
+    eval ROBOMAKER_ID=$(docker ps | grep "deepracer-${DR_RUN_ID}_robomaker" | cut -f1 -d\  | head -1)
+    if [ -n "$ROBOMAKER_ID" ]; then
+        docker logs -f $ROBOMAKER_ID 2>&1 | grep DEBUG
+    else
+        echo "Robomaker is not running."
+    fi
+}
+
 function dr-logs-loganalysis {
   eval LOG_ANALYSIS_ID=$(docker ps | awk ' /loganalysis/ { print $1 }')
   if [ -n "$LOG_ANALYSIS_ID" ]; then
@@ -111,7 +120,7 @@ function dr-logs-loganalysis {
 
 }
 
-function dr-loganalysis-url {
+function dr-url-loganalysis {
   eval LOG_ANALYSIS_ID=$(docker ps | awk ' /loganalysis/ { print $1 }')
   if [ -n "$LOG_ANALYSIS_ID" ]; then
     eval URL=$(docker logs $LOG_ANALYSIS_ID | perl -n -e'/(http:\/\/127\.0\.0\.1\:8888\/\?.*)/; print $1')
