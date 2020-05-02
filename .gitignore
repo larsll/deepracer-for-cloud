@@ -5,8 +5,7 @@ logs/
 docker/volumes/
 recording/
 recording
-run.env
-*.bak
-system.env
+/*.env
+/*.bak
 DONE
 tmp/
