@@ -31,6 +31,7 @@ function dr-update-env {
     export DR_RUN_ID=0
   fi
   export DR_ROBOMAKER_PORT=$(echo "8080 + $DR_RUN_ID" | bc)
+  export DR_ROBOMAKER_GUI_PORT=$(echo "5900 + $DR_RUN_ID" | bc)
 
 }
 
