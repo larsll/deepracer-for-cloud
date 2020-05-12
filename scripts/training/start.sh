@@ -42,10 +42,11 @@ then
   fi
 fi
 
-echo "Creating Robomaker configuration in $S3_PATH/training_params.yaml"
+echo "Creating Robomaker configuration in $S3_PATH/$DR_LOCAL_S3_TRAINING_PARAMS_FILE"
 python3 prepare-config.py
 
 export ROBOMAKER_COMMAND="./run.sh build distributed_training.launch"
+export DR_CURRENT_PARAMS_FILE=${DR_LOCAL_S3_TRAINING_PARAMS_FILE}
 COMPOSE_FILES=$DR_COMPOSE_FILE
 STACK_NAME="deepracer-$DR_RUN_ID"
 docker stack deploy $COMPOSE_FILES $STACK_NAME
