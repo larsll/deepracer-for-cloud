@@ -20,7 +20,10 @@ config['METRICS_S3_BUCKET'] = os.environ.get('DR_LOCAL_S3_BUCKET', 'bucket')
 config['METRICS_S3_OBJECT_KEY'] = os.environ.get('DR_LOCAL_S3_METRICS_KEY', 'DeepRacer-Metrics/EvalMetrics-{}.json'.format(str(round(time.time()))))
 config['MODEL_S3_PREFIX'] = os.environ.get('DR_LOCAL_S3_MODEL_PREFIX', 'rl-deepracer-sagemaker')
 config['MODEL_S3_BUCKET'] = os.environ.get('DR_LOCAL_S3_BUCKET', 'bucket')
-config['NUMBER_OF_EPISODES'] = os.environ.get('DR_NUMBER_OF_EPISODES', '0')
+config['NUMBER_OF_TRIALS'] = os.environ.get('DR_EVAL_NUMBER_OF_TRIALS', '5')
+config['NUMBER_OF_RESETS'] = os.environ.get('DR_EVAL_NUMBER_OF_RESETS', '0')
+config['IS_CONTINUOUS'] = os.environ.get('DR_EVAL_IS_CONTINUOUS', '0')
+config['OFF_TRACK_PENALTY'] = os.environ.get('DR_EVAL_OFF_TRACK_PENALTY', '5.0')
 config['RACE_TYPE'] = os.environ.get('DR_RACE_TYPE', 'TIME_TRIAL')
 config['ROBOMAKER_SIMULATION_JOB_ACCOUNT_ID'] = os.environ.get('', 'Dummy')
 config['SIMTRACE_S3_BUCKET'] = os.environ.get('DR_LOCAL_S3_BUCKET', 'bucket')
@@ -36,7 +39,7 @@ if s3_mode == 'profile':
     s3_profile = os.environ.get('DR_LOCAL_S3_PROFILE', 'default')
 else: # mode is 'role'
     s3_profile = None
-s3_yaml_name = os.environ.get('DR_LOCAL_S3_EVAL_PARAMS_FILE', 'eval_params.yaml')
+s3_yaml_name = os.environ.get('DR_LOCAL_S3_EVAL_PARAMS_FILE', 'eval-params.yaml')
 yaml_key = os.path.normpath(os.path.join(s3_prefix, s3_yaml_name))
 
 session = boto3.session.Session(profile_name=s3_profile)
