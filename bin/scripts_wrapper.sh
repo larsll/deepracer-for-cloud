@@ -47,7 +47,7 @@ function dr-stop-training {
 
 function dr-start-evaluation {
   dr-update-env
-  bash -c "cd $DIR/scripts/evaluation && ./start.sh"
+  bash -c "cd $DIR/scripts/evaluation && ./start.sh $@"
 }
 
 function dr-stop-evaluation {
