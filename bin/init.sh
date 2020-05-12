@@ -91,6 +91,7 @@ if [[ "${OPT_CLOUD}" == "aws" ]]; then
 else
     AWS_REGION="us-east-1"
     sed -i "s/<LOCAL_PROFILE>/minio/g" $INSTALL_DIR/system.env
+    sed -i "s/<AWS_DR_BUCKET>/not-defined/g" $INSTALL_DIR/system.env
     echo "Please run 'aws configure --profile minio' to set the credentials"
 fi
 
@@ -119,7 +120,7 @@ do
 done
 
 # Download docker images. Change to build statements if locally built images are desired.
-docker pull larsll/deepracer-rlcoach:v2.1
+docker pull larsll/deepracer-rlcoach:v2.2
 docker pull awsdeepracercommunity/deepracer-robomaker:$CPU_LEVEL
 docker pull awsdeepracercommunity/deepracer-sagemaker:$SAGEMAKER_TAG
 docker pull larsll/deepracer-loganalysis:v2-cpu
