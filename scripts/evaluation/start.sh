@@ -1,9 +1,9 @@
 # set evaluation specific environment variables
 export ROBOMAKER_COMMAND="./run.sh build evaluation.launch"
 export METRICS_S3_OBJECT_KEY=metrics/eval_metrics.json
-
-docker-compose $DR_COMPOSE_FILE up -d
-
+COMPOSE_FILES=$DR_COMPOSE_FILE
+STACK_NAME="deepracer-$DR_RUN_ID"
+docker stack deploy $COMPOSE_FILES $STACK_NAME
 
 echo 'waiting for containers to start up...'
 
