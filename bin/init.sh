@@ -67,7 +67,7 @@ sudo mkdir -p /tmp/sagemaker
 # create symlink to current user's home .aws directory 
 # NOTE: AWS cli must be installed for this to work
 # https://docs.aws.amazon.com/cli/latest/userguide/install-linux-al2017.html
-mkdir -p $(eval echo "~${USER}")/.aws
+mkdir -p $(eval echo "~${USER}")/.aws $INSTALL_DIR/docker/volumes/
 ln -sf $(eval echo "~${USER}")/.aws  $INSTALL_DIR/docker/volumes/
 
 # copy rewardfunctions

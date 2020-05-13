@@ -34,7 +34,7 @@ then
     ADDL_DISK=$(lsblk | awk  '/^sdc/ {print $1}')
     ADDL_PART=$(lsblk -l | awk -v DISK="$ADDL_DISK" '($0 ~ DISK) && ($0 ~ /part/) {print $1}')
 
-    if [ -n $ADDL_DISK ] && [ -z $ADDL_PART ];
+    if [ -n "$ADDL_DISK" ] && [ -z "$ADDL_PART" ];
     then
         echo "Found $ADDL_DISK, preparing it for use"
         echo -e "g\nn\np\n1\n\n\nw\n" | sudo fdisk /dev/$ADDL_DISK
@@ -49,7 +49,7 @@ then
             echo "Error during preparing of additional disk. Exiting."
             exit 1
         fi
-    elif  [ -n $ADDL_DISK ] && [ -n $ADDL_PART ];
+    elif  [ -n "$ADDL_DISK" ] && [ -n "$ADDL_PART" ];
     then
         echo "Found $ADDL_DISK - $ADDL_PART already mounted. Installing into present drive/directory structure."
 
