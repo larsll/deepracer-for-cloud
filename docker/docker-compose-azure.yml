@@ -10,7 +10,6 @@ services:
     image: minio/minio
     ports:
       - "9000:9000"
-    container_name: minio
     command: gateway azure
     environment:
       - MINIO_ACCESS_KEY=${DR_LOCAL_ACCESS_KEY_ID}

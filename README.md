@@ -38,8 +38,6 @@ Depending on your needs as well as specific needs of the cloud platform you can 
 	
 ## Installation
 
-A step by step [installation guide](https://github.com/larsll/deepracer-for-cloud/wiki/Install-DeepRacer-in-Azure) for manual installation in Azure is available.
-
 The package comes with preparation and setup scripts that would allow a turn-key setup for a fresh virtual machine.
 
 	git clone https://github.com/larsll/deepracer-for-cloud.git
@@ -51,8 +49,13 @@ The installation script will adapt `.profile` to ensure that all settings are ap
 
 For local install it is recommended *not* to run the `bin/prepare.sh` script; it might do more changes than what you want. Rather ensure that all prerequisites are set up and run `bin/init.sh` directly.
 
+The Init Script takes a few parameters:
+| Variable | Description |
+|----------|-------------|
+| `-c <cloud>` | Sets the cloud version to be configured, automatically updates the `DR_CLOUD` parameter in `system.env`. Options are `azure`, `aws` or `local`. Default is `local` |
+| `-a <arch>` | Sets the architecture to be configured. Either `cpu` or `gpu`. Default is `gpu`. |
+
 *TODO: Document how to configure via cloud-init.*
-*TODO: Create a local setup prepare script*
 
 ## Environment Setup
 
@@ -115,12 +118,16 @@ If you want to use awscli (`aws`) to manually move files then use `aws $DR_LOCAL
 
 Local mode runs a minio server that hosts the data in the `docker/volumes` directory. It is otherwise command-compatible with the Azure setup; as the data is accessible via Minio and not via native S3.
 
+After having run init.sh do the following:
+* Configure the Minio credentials with `aws configure --profile minio`. The default configuration will use the `minio` profile to configure MINIO.
+* Configure your normal AWS credentials with `aws configure` if this is not already in place on your system. This is required to use the model upload functionality.
+
 ### Environment Variables
-The scripts assume that two files `systen.env` containing constant configuration values and  `run.env` with run specific values is populated with the required values.
+The scripts assume that two files `systen.env` containing constant configuration values and  `run.env` with run specific values is populated with the required values. Which values go into which file is not really important.
 
 | Variable | Description |
 |----------|-------------|
-| `DR_CLOUD` | Can be `Azure` or `AWS`; determines how the storage will be configured.|
+| `DR_CLOUD` | Can be `azure`, `aws` or `local`; determines how the storage will be configured.|
 | `DR_WORLD_NAME` | Defines the track to be used.| 
 | `DR_NUMBER_OF_TRIALS` | Defines the number of trials in an evaluation session.| 
 | `DR_CHANGE_START_POSITION` | Determines if the racer shall round-robin the starting position during training sessions. (Recommended to be `True` for initial training.)| 
