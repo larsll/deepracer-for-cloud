@@ -59,8 +59,9 @@ INSTALL_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." >/dev/null 2>&1 && pwd 
 cd $INSTALL_DIR
 
 # create directory structure for docker volumes
-mkdir -p $INSTALL_DIR/tmp $INSTALL_DIR/tmp/recording
-mkdir -p $INSTALL_DIR/docker/volumes $INSTALL_DIR/docker/volumes/minio/bucket 
+mkdir -p $INSTALL_DIR/data $INSTALL_DIR/data/recording
+mkdir -p $INSTALL_DIR/data/minio $INSTALL_DIR/data/minio/bucket 
+mkdir -p $INSTALL_DIR/data/logs $INSTALL_DIR/data/analysis
 sudo mkdir -p /tmp/sagemaker
 
 # create symlink to current user's home .aws directory 
@@ -70,7 +71,7 @@ mkdir -p $(eval echo "~${USER}")/.aws
 ln -sf $(eval echo "~${USER}")/.aws  $INSTALL_DIR/docker/volumes/
 
 # copy rewardfunctions
-mkdir -p $INSTALL_DIR/custom_files $INSTALL_DIR/logs $INSTALL_DIR/analysis
+mkdir -p $INSTALL_DIR/custom_files 
 cp $INSTALL_DIR/defaults/hyperparameters.json $INSTALL_DIR/custom_files/
 cp $INSTALL_DIR/defaults/model_metadata.json $INSTALL_DIR/custom_files/
 cp $INSTALL_DIR/defaults/reward_function.py $INSTALL_DIR/custom_files/

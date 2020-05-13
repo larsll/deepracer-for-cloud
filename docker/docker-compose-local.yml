@@ -19,5 +19,5 @@ services:
       - MINIO_USERNAME
       - MINIO_GROUPNAME
     volumes:
-      - ${DR_DIR}/docker/volumes/minio:/data
+      - ${DR_DIR}/data/minio:/data
 
