@@ -10,6 +10,11 @@ usage(){
 
 trap ctrl_c INT
 
+function ctrl_c() {
+        echo "Requested to stop."
+        exit 1
+}
+
 # set evaluation specific environment variables
 export ROBOMAKER_COMMAND="./run.sh build evaluation.launch"
 export DR_CURRENT_PARAMS_FILE=${DR_LOCAL_S3_EVAL_PARAMS_FILE}
@@ -18,8 +23,8 @@ S3_PATH="s3://$DR_LOCAL_S3_BUCKET/$DR_LOCAL_S3_MODEL_PREFIX"
 echo "Creating Robomaker configuration in $S3_PATH/$DR_CURRENT_PARAMS_FILE"
 python3 prepare-config.py
 
-COMPOSE_FILES=$DR_COMPOSE_FILE
-STACK_NAME="deepracer-$DR_RUN_ID"
+COMPOSE_FILES=$DR_EVAL_COMPOSE_FILE
+STACK_NAME="deepracer-eval-$DR_RUN_ID"
 
 docker stack deploy $COMPOSE_FILES $STACK_NAME
 

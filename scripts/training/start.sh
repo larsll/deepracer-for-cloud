@@ -47,7 +47,7 @@ python3 prepare-config.py
 
 export ROBOMAKER_COMMAND="./run.sh build distributed_training.launch"
 export DR_CURRENT_PARAMS_FILE=${DR_LOCAL_S3_TRAINING_PARAMS_FILE}
-COMPOSE_FILES=$DR_COMPOSE_FILE
+COMPOSE_FILES=$DR_TRAIN_COMPOSE_FILE
 STACK_NAME="deepracer-$DR_RUN_ID"
 docker stack deploy $COMPOSE_FILES $STACK_NAME
 echo 'Waiting for containers to start up...'
