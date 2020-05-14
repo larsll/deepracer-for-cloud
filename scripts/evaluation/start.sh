@@ -16,7 +16,7 @@ function ctrl_c() {
 }
 
 # set evaluation specific environment variables
-export ROBOMAKER_COMMAND="./run.sh build evaluation.launch"
+export ROBOMAKER_COMMAND="./run.sh run evaluation.launch"
 export DR_CURRENT_PARAMS_FILE=${DR_LOCAL_S3_EVAL_PARAMS_FILE}
 S3_PATH="s3://$DR_LOCAL_S3_BUCKET/$DR_LOCAL_S3_MODEL_PREFIX"
 
