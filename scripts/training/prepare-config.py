@@ -56,7 +56,7 @@ session = boto3.session.Session(profile_name=s3_profile)
 s3_client = session.client('s3', region_name=s3_region, endpoint_url=s3_endpoint_url)
 
 yaml_key = os.path.normpath(os.path.join(s3_prefix, s3_yaml_name))
-local_yaml_path = os.path.abspath(os.path.join('/tmp', 'training-params-' + str(round(time.time())) + '.yaml'))
+local_yaml_path = os.path.abspath(os.path.join(os.environ.get('DR_DIR'),'tmp', 'training-params-' + str(round(time.time())) + '.yaml'))
 
 with open(local_yaml_path, 'w') as yaml_file:
     yaml.dump(config, yaml_file, default_flow_style=False, default_style='\'', explicit_start=True)
