@@ -142,7 +142,10 @@ then
 fi
 
 # ensure our variables are set on startup
-echo "source $INSTALL_DIR/bin/activate.sh" >> $HOME/.profile
+NUM_IN_PROFILE=$(cat $HOME/.profile | grep "$INSTALL_DIR/bin/activate.sh" | wc -l)
+if [ "$NUM_IN_PROFILE" -eq 0 ]; then
+    echo "source $INSTALL_DIR/bin/activate.sh" >> $HOME/.profile
+fi
 
 # mark as done
 date | tee $INSTALL_DIR/DONE
