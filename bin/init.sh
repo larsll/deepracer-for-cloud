@@ -7,8 +7,11 @@ function ctrl_c() {
         exit 1
 }
 
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+INSTALL_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." >/dev/null 2>&1 && pwd )"
+
 OPT_ARCH="gpu"
-OPT_CLOUD="local"
+OPT_CLOUD=""
 
 while getopts ":m:c:a:" opt; do
 case $opt in
@@ -23,6 +26,12 @@ exit 1
 ;;
 esac
 done
+
+if [[ -z "$OPT_CLOUD" ]]; then
+    source $DIR/detect.sh
+    OPT_CLOUD=$CLOUD_NAME
+    echo "Detected cloud type to be $CLOUD_NAME"
+fi
 
 # Find CPU Level
 CPU_LEVEL="cpu"
@@ -54,8 +63,6 @@ then
     fi
 fi
 
-
-INSTALL_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." >/dev/null 2>&1 && pwd )"
 cd $INSTALL_DIR
 
 # create directory structure for docker volumes
