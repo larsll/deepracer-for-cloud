@@ -28,7 +28,7 @@ esac
 done
 
 if [[ -z "$OPT_CLOUD" ]]; then
-    source $DIR/detect.sh
+    source $SCRIPT_DIR/detect.sh
     OPT_CLOUD=$CLOUD_NAME
     echo "Detected cloud type to be $CLOUD_NAME"
 fi
