@@ -87,7 +87,7 @@ cp $INSTALL_DIR/defaults/template-run.env $INSTALL_DIR/run.env
 
 if [[ "${OPT_CLOUD}" == "aws" ]]; then
     AWS_DR_BUCKET=$(aws s3api list-buckets | jq '.Buckets[] | select(.Name | startswith("aws-deepracer")) | .Name' -r)
-    AWS_DR_BUCKET_COUNT=$(echo $AWS_DR_BUCKET | wc -l)
+    AWS_DR_BUCKET_COUNT=$(echo $AWS_DR_BUCKET | wc -w)
     AWS_EC2_AVAIL_ZONE=`curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone`
     AWS_REGION="`echo \"$AWS_EC2_AVAIL_ZONE\" | sed 's/[a-z]$//'`"
     if [ "$AWS_DR_BUCKET_COUNT" -eq 1 ]; then
