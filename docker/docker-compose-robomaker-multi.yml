@@ -1,0 +1,9 @@
+version: '3.7'
+
+services:
+  robomaker:
+    endpoint-mode: dnsrr
+    deploy:
+      replicas: ${DR_WORKERS}
+    volumes:
+      - "${DR_DIR}/tmp/comms.${DR_RUN_ID}:/mnt/comms"
