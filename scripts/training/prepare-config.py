@@ -45,6 +45,7 @@ config['RACER_NAME'] = os.environ.get('DR_RACER_NAME', 'racer1')
 
 config['ALTERNATE_DRIVING_DIRECTION'] = os.environ.get('DR_ALTERNATE_DRIVING_DIRECTION', 'false')
 config['CHANGE_START_POSITION'] = os.environ.get('DR_CHANGE_START_POSITION', 'true')
+config['ENABLE_DOMAIN_RANDOMIZATION'] = os.environ.get('DR_ENABLE_DOMAIN_RANDOMIZATION', 'false')
 
 # Object Avoidance
 if config['RACE_TYPE'] == 'OBJECT_AVOIDANCE':

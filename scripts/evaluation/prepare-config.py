@@ -47,6 +47,7 @@ config['WORLD_NAME'] = os.environ.get('DR_WORLD_NAME', 'LGSWide')
 config['NUMBER_OF_TRIALS'] = os.environ.get('DR_EVAL_NUMBER_OF_TRIALS', '5')
 config['DISPLAY_NAME'] = os.environ.get('DR_DISPLAY_NAME', 'racer1')
 config['RACER_NAME'] = os.environ.get('DR_RACER_NAME', 'racer1')
+config['ENABLE_DOMAIN_RANDOMIZATION'] = os.environ.get('DR_ENABLE_DOMAIN_RANDOMIZATION', 'false')
 
 is_continous = str2bool(os.environ.get('DR_EVAL_IS_CONTINUOUS', 'False'))
 if is_continous:
