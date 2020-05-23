@@ -2,7 +2,9 @@ version: '3.7'
 
 services:
   robomaker:
-    endpoint-mode: dnsrr
+    networks:
+      - sagemaker-local
+      - bridge
     deploy:
       replicas: ${DR_WORKERS}
     volumes:
