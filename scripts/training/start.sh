@@ -28,7 +28,7 @@ esac
 done
 
 # Ensure Sagemaker's folder is there
-sudo mkdir /tmp/sagemaker
+sudo mkdir -p /tmp/sagemaker
 
 #Check if files are available
 S3_PATH="s3://$DR_LOCAL_S3_BUCKET/$DR_LOCAL_S3_MODEL_PREFIX"
