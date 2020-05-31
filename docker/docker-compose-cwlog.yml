@@ -6,12 +6,12 @@ services:
       driver: awslogs
       options:
         awslogs-group: '/deepracer-for-cloud'
-        awslogs-create-group: true 
+        awslogs-create-group: 'true'
         awslogs-region: ${DR_AWS_APP_REGION}
   robomaker:
     logging:
       driver: awslogs
       options:
         awslogs-group: '/deepracer-for-cloud'
-        awslogs-create-group: true 
+        awslogs-create-group: 'true' 
         awslogs-region: ${DR_AWS_APP_REGION}
