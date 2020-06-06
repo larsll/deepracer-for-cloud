@@ -159,5 +159,5 @@ then
     TRAININGBUCKET=$(cat bucket.txt)
     aws s3 cp s3://$TRAININGBUCKET/autorun.sh $INSTALL_DIR/autorun.sh
     chmod +x $INSTALL_DIR/autorun.sh
-    exec $INSTALL_DIR/autorun.sh
+    bash -c $INSTALL_DIR/autorun.sh
 fi
