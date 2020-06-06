@@ -153,3 +153,11 @@ fi
 
 # mark as done
 date | tee $INSTALL_DIR/DONE
+
+if [[ -f "$INSTALL_DIR/bucket.txt" ]]
+then
+    TRAININGBUCKET=$(cat bucket.txt)
+    aws s3 cp s3://$TRAININGBUCKET/autorun.sh $INSTALL_DIR/autorun.sh
+    chmod +x $INSTALL_DIR/autorun.sh
+    bash $INSTALL_DIR/autorun.sh
+fi
