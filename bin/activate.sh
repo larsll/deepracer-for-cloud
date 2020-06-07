@@ -30,8 +30,15 @@ function dr-update-env {
   if [[ -z "${DR_RUN_ID}" ]]; then
     export DR_RUN_ID=0
   fi
-  export DR_ROBOMAKER_PORT=$(echo "8080 + $DR_RUN_ID" | bc)
-  export DR_ROBOMAKER_GUI_PORT=$(echo "5900 + $DR_RUN_ID" | bc)
+
+  if [[ "${DR_DOCKER_STYLE,,}" == "swarm" ]];
+  then
+    export DR_ROBOMAKER_PORT=$(expr 8080 + $DR_RUN_ID)
+    export DR_ROBOMAKER_GUI_PORT=$(expr 5900 + $DR_RUN_ID)
+  else
+    export DR_ROBOMAKER_PORT="8080-8100"
+    export DR_ROBOMAKER_GUI_PORT="5900-5920"
+  fi
 
 }
 
