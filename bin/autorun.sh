@@ -29,7 +29,7 @@ docker pull awsdeepracercommunity/deepracer-robomaker:$ROBOMAKER_IMAGE
 
 dr-update
 
-date | tee $$INSTALL_DIR_TEMP/DONE-2
+date | tee $INSTALL_DIR_TEMP/DONE-2
 
 ## start training -- commented out for now until I can figure out how to do it properly
 ##cd /home/ubuntu/deepracer-for-cloud/scripts/training 
