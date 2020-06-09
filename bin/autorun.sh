@@ -32,6 +32,6 @@ dr-update
 date | tee $INSTALL_DIR_TEMP/DONE-AUTORUN
 
 ## start training -- commented out for now until I can figure out how to do it properly
-##cd /home/ubuntu/deepracer-for-cloud/scripts/training 
-##./start.sh
+cd /home/ubuntu/deepracer-for-cloud/scripts/training 
+nohup ./start.sh &
 
