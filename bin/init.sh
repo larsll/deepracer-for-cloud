@@ -162,15 +162,13 @@ then
     TRAININGBUCKET=$(cat bucket.txt)
     
     ##check if custom autorun script exists in s3 training bucket.  If not, use default in this repo
-    aws s3api head-object --bucket $TRAININGBUCKET --key autorun-dev.sh || not_exist=true
+    aws s3api head-object --bucket $TRAININGBUCKET --key autorun.sh || not_exist=true
     if [ $not_exist ]; then
-        # custom file it does not exist, use local copy
-        echo "it does not exist"      
+        echo "custom file does not exist, using local copy"      
     else
-        ## custom script does exist, use it 
-        aws s3 cp s3://$TRAININGBUCKET/autorun.sh $INSTALL_DIR/bin/autorun-dev.sh   
+        echo "custom script does exist, use it"
+        aws s3 cp s3://$TRAININGBUCKET/autorun.sh $INSTALL_DIR/bin/autorun.sh   
     fi
-
-    chmod +x $INSTALL_DIR/bin/autorun-dev.sh
-    source $INSTALL_DIR/bin/autorun-dev.sh
+    chmod +x $INSTALL_DIR/bin/autorun.sh
+    source $INSTALL_DIR/bin/autorun.sh
 fi
