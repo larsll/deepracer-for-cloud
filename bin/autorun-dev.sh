@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 
-## Notes:
-## I could not get $DIR to work, so had to hard code the full directory name throughout
-
-## this file should run automatically after init.sh completes.  best to add it as an optional part of init.sh (if bucket.txt exists)
+## this is the default autorun script
+## file should run automatically after init.sh completes.  
+## this script downloads your configured run.env, system.env and any custom container requests
 
 ## retrieve the bucket name you sent the instance earlier
 BUCKET=$(cat /home/ubuntu/deepracer-for-cloud/bucket.txt)
