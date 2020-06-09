@@ -154,10 +154,23 @@ fi
 # mark as done
 date | tee $INSTALL_DIR/DONE
 
+
+# if using custom automation scripts to auto configure and run
+# you must pass bucket.txt to this instance in order for this to work
 if [[ -f "$INSTALL_DIR/bucket.txt" ]]
 then
     TRAININGBUCKET=$(cat bucket.txt)
-    aws s3 cp s3://$TRAININGBUCKET/autorun.sh $INSTALL_DIR/autorun.sh
-    chmod +x $INSTALL_DIR/autorun.sh
-    source $INSTALL_DIR/autorun.sh
+    
+    ##check if custom autorun script exists in s3 training bucket.  If not, use default in this repo
+    aws s3api head-object --bucket $TRAININGBUCKET --key autorun.sh || not_exist=true
+    if [ $not_exist ]; then
+        # custom file it does not exist, use local copy
+        echo "it does not exist"      
+    else
+        ## custom script does exist, use it 
+        aws s3 cp s3://$TRAININGBUCKET/autorun.sh $INSTALL_DIR/bin/autorun-dev.sh   
+    fi
+
+    chmod +x $INSTALL_DIR/bin/autorun-dev.sh
+    source $INSTALL_DIR/bin/autorun-dev.sh
 fi
