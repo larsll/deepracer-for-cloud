@@ -4,12 +4,12 @@
 ## file should run automatically after init.sh completes.  
 ## this script downloads your configured run.env, system.env and any custom container requests
 
-## retrieve the bucket name you sent the instance earlier
-BUCKET=$(cat /home/ubuntu/deepracer-for-cloud/bucket.txt)
-
-SCRIPT_DIR_TEMP="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 INSTALL_DIR_TEMP="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." >/dev/null 2>&1 && pwd )"
 
+## retrieve the bucket name you sent the instance earlier
+BUCKET=$(cat $INSTALL_DIR_TEMP/bucket.txt)
+
+## load some variables
 source $INSTALL_DIR_TEMP/bin/scripts_wrapper.sh
 source $INSTALL_DIR_TEMP/bin/activate.sh
 
