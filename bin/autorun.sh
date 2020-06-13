@@ -9,6 +9,8 @@ INSTALL_DIR_TEMP="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." >/dev/null 2>&1 &&
 ## retrieve the s3_location name you sent the instance in user data launch
 S3_LOCATION=$(cat $INSTALL_DIR_TEMP/bin/s3_training_location.txt)
 
+source $INSTALL_DIR_TEMP/bin/activate.sh
+
 ## get the updatated run.env and system.env files you created and stashed in s3
 aws s3 cp s3://$S3_LOCATION/run.env $INSTALL_DIR_TEMP/run.env
 aws s3 cp s3://$S3_LOCATION/system.env $INSTALL_DIR_TEMP/system.env
