@@ -159,7 +159,9 @@ date | tee $INSTALL_DIR/DONE
 # you must pass s3_training_location.txt to this instance in order for this to work
 if [[ -f "$INSTALL_DIR/bin/s3_training_location.txt" ]]
 then
-    TRAINING_LOC=$(cat s3_training_location.txt)
+    ## read in first line.  first line always assumed to be training location regardless what else is in file
+    TRAINING_LOC=$(awk 'NR==1 {print; exit}' $INSTALL_DIR/bin/s3_training_location.txt)
+    #TRAINING_LOC=$(cat s3_training_location.txt)
     
     #get bucket and prefix
     TRAINING_BUCKET=${TRAINING_LOC%%/*}
