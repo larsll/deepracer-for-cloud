@@ -103,4 +103,4 @@ aws ec2 run-instances \
     --iam-instance-profile Arn=arn:aws:iam::<####acct_num####>:instance-profile/<####role_name####> \
     --instance-market-options MarketType=spot \
     --user-data "#!/bin/bash
-    su -c 'git clone https://github.com/larsll/deepracer-for-cloud.git && cd deepracer-for-cloud && mkdir tmp && echo "$S3_LOCATION" > /home/ubuntu/deepracer-for-cloud/tmp/s3_training_location.txt && /home/ubuntu/deepracer-for-cloud/bin/prepare.sh' - ubuntu"
+    su -c 'git clone https://github.com/larsll/deepracer-for-cloud.git && echo "$S3_LOCATION" > /home/ubuntu/deepracer-for-cloud/bin/s3_training_location.txt && /home/ubuntu/deepracer-for-cloud/bin/prepare.sh' - ubuntu"
