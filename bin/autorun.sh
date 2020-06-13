@@ -6,18 +6,12 @@
 
 INSTALL_DIR_TEMP="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." >/dev/null 2>&1 && pwd )"
 
-## retrieve the bucket name you sent the instance earlier
-BUCKET=$(cat $INSTALL_DIR_TEMP/bucket.txt)
-
-## load some variables
-source $INSTALL_DIR_TEMP/bin/scripts_wrapper.sh
-source $INSTALL_DIR_TEMP/bin/activate.sh
-
+## retrieve the s3_location name you sent the instance in user data launch
+S3_LOCATION=$(cat $INSTALL_DIR_TEMP/tmp/s3_training_location.txt)
 
 ## get the updatated run.env and system.env files you created and stashed in s3
-aws s3 cp s3://$BUCKET/run.env $INSTALL_DIR_TEMP/run.env
-aws s3 cp s3://$BUCKET/system.env $INSTALL_DIR_TEMP/system.env
-
+aws s3 cp s3://$S3_LOCATION/run.env $INSTALL_DIR_TEMP/run.env
+aws s3 cp s3://$S3_LOCATION/system.env $INSTALL_DIR_TEMP/system.env
 
 ## get the right docker containers, if needed
 SYSENV="$INSTALL_DIR_TEMP/system.env"
@@ -27,11 +21,11 @@ ROBOMAKER_IMAGE=$(cat $SYSENV | grep DR_ROBOMAKER_IMAGE | sed 's/.*=//')
 docker pull awsdeepracercommunity/deepracer-sagemaker:$SAGEMAKER_IMAGE
 docker pull awsdeepracercommunity/deepracer-robomaker:$ROBOMAKER_IMAGE
 
-dr-update
+dr-reload
 
 date | tee $INSTALL_DIR_TEMP/DONE-AUTORUN
 
-## start training -- commented out for now until I can figure out how to do it properly
+## start training
 cd $INSTALL_DIR_TEMP/scripts/training 
 nohup ./start.sh &
 
