@@ -155,8 +155,8 @@ fi
 date | tee $INSTALL_DIR/DONE
 
 
-# if using custom automation scripts to auto configure and run
-# you must pass bucket.txt to this instance in order for this to work
+# if using automation scripts to auto configure and run
+# you must pass s3_training_location.txt to this instance in order for this to work
 if [[ -f "$INSTALL_DIR/bin/s3_training_location.txt" ]]
 then
     TRAININGLOC=$(cat s3_training_location.txt)
