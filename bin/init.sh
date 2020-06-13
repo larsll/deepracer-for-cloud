@@ -163,9 +163,16 @@ then
     TRAINING_LOC=$(awk 'NR==1 {print; exit}' $INSTALL_DIR/bin/s3_training_location.txt)
     #TRAINING_LOC=$(cat s3_training_location.txt)
     
-    #get bucket and prefix
+    #get bucket 
     TRAINING_BUCKET=${TRAINING_LOC%%/*}
-    TRAINING_PREFIX=${TRAININGLOC#*/}
+    #get prefix. minor exception handling in case there is no prefix
+    if [[ "$TRAININGLOC" == *"/"* ]]
+    then
+      TRAINING_PREFIX=${TRAININGLOC#*/}
+    else
+      TRAINING_PREFIX=""
+    fi
+  
         
     ##check if custom autorun script exists in s3 training bucket.  If not, use default in this repo
     aws s3api head-object --bucket $TRAINING_BUCKET --key $TRAINING_PREFIX/autorun.sh || not_exist=true
