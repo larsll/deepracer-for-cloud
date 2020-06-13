@@ -63,7 +63,7 @@ OLD_RUNENV="./run.env"
 OLD_SYSTEMENV="./system.env"
 
 ## Replace dynamic model paramemters inside run.env file (still local to your directory)
-sed -i.bak -re "s/(DR_LOCAL_S3_PRETRAINED_PREFIX=).*$/\1$PRETRAINED_PREFIX/g; s/(DR_LOCAL_S3_PRETRAINED=).*$/\1$PRETRAINED/g; s/(DR_LOCAL_S3_BUCKET=).*$/\1$BUCKET/g; s/(DR_LOCAL_S3_MODEL_PREFIX=).*$/\1$MODEL_PREFIX/g" "$OLD_RUNENV"
+sed -i.bak -re "s/(DR_LOCAL_S3_PRETRAINED_PREFIX=).*$/\1$PRETRAINED_PREFIX/g; s/(DR_LOCAL_S3_PRETRAINED=).*$/\1$PRETRAINED/g; s/(DR_LOCAL_S3_BUCKET=).*$/\1$S3_LOCATION/g; s/(DR_LOCAL_S3_MODEL_PREFIX=).*$/\1$MODEL_PREFIX/g" "$OLD_RUNENV"
 
 ## Replace static parameters in run.env (still local to your directory)
 sed -i.bak -re "s/(DR_UPLOAD_S3_PREFIX=).*$/\1$DR_UPLOAD_S3_PREFIX/g" "$OLD_RUNENV"
