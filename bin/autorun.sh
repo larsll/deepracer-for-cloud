@@ -7,7 +7,8 @@
 INSTALL_DIR_TEMP="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." >/dev/null 2>&1 && pwd )"
 
 ## retrieve the s3_location name you sent the instance in user data launch
-S3_LOCATION=$(cat $INSTALL_DIR_TEMP/bin/s3_training_location.txt)
+## assumed to first line of file
+S3_LOCATION=$(awk 'NR==1 {print; exit}' $INSTALL_DIR/bin/s3_training_location.txt)
 
 source $INSTALL_DIR_TEMP/bin/activate.sh
 
