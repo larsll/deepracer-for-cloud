@@ -7,7 +7,7 @@
 ##     Input security group, iam role, and key-name
 
 ## First you need to tell the script where in s3 your training will take place
-## can be either a bucket, or a bucket/prefix
+## can be either a bucket, or a bucket/prefix.  don't include the s3://
 
 S3_LOCATION=<#########>
 
