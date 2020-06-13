@@ -75,8 +75,8 @@ sed -i.bak -re "s/(DR_UPLOAD_S3_BUCKET=).*$/\1$DR_UPLOAD_S3_BUCKET/g; s/(DR_SAGE
 
 
 ## upload the new run.env and system.env files into your S3 location (same location identified at beginning of script)
-aws s3 cp ./run.env s3://$S3_LOCATION/run.env
-aws s3 cp ./system.env s3://$S3_LOCATION/system.env
+aws s3 cp ./run.env s3://$S3_LOCATION/node-config/run.env
+aws s3 cp ./system.env s3://$S3_LOCATION/node-config/system.env
 
 ## upload a custom autorun script to S3.  there is a default autorun script in the repo that will be used unless a custom one is specified here instead
 #aws s3 cp ./autorun.sh s3://$S3_LOCATION/autorun.sh
