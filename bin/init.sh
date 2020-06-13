@@ -159,15 +159,21 @@ date | tee $INSTALL_DIR/DONE
 # you must pass s3_training_location.txt to this instance in order for this to work
 if [[ -f "$INSTALL_DIR/bin/s3_training_location.txt" ]]
 then
-    TRAININGLOC=$(cat s3_training_location.txt)
+    TRAINING_LOC=$(cat s3_training_location.txt)
     
+    #Strip the S3://
+    TRAINING_LOC=${TRAINING_LOC:5}
+    #get bucket and prefix
+    TRAINING_BUCKET=${TRAINING_LOC%%/*}
+    TRAINING_PREFIX=${TRAININGLOC#*/}
+        
     ##check if custom autorun script exists in s3 training bucket.  If not, use default in this repo
-    aws s3api head-object --bucket $TRAININGLOC --key autorun.sh || not_exist=true
+    aws s3api head-object --bucket $TRAINING_BUCKET --key $TRAINING_PREFIX/autorun.sh || not_exist=true
     if [ $not_exist ]; then
         echo "custom file does not exist, using local copy"      
     else
         echo "custom script does exist, use it"
-        aws s3 cp s3://$TRAININGLOC/autorun.sh $INSTALL_DIR/bin/autorun.sh   
+        aws s3 cp s3://$TRAINING_LOC/autorun.sh $INSTALL_DIR/bin/autorun.sh   
     fi
     chmod +x $INSTALL_DIR/bin/autorun.sh
     nohup bash -c "source $INSTALL_DIR/bin/autorun.sh" &
