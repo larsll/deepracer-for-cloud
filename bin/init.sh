@@ -161,8 +161,6 @@ if [[ -f "$INSTALL_DIR/bin/s3_training_location.txt" ]]
 then
     TRAINING_LOC=$(cat s3_training_location.txt)
     
-    #Strip the S3://
-    TRAINING_LOC=${TRAINING_LOC:5}
     #get bucket and prefix
     TRAINING_BUCKET=${TRAINING_LOC%%/*}
     TRAINING_PREFIX=${TRAININGLOC#*/}
