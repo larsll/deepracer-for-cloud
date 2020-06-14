@@ -10,9 +10,10 @@
 ## can be either a bucket at the root level, or a bucket/prefix.  don't include the s3://
 
 S3_LOCATION=<#########>
-## extract bucket location
 
+## extract bucket location
 BUCKET=${S3_LOCATION%%/*}
+
 ## extract prefix location
 if [[ "$S3_LOCATION" == *"/"* ]]
 then
@@ -33,11 +34,9 @@ WORLD_NAME=FS_June2020
 ## modify this if you want additional robomaker workers
 DR_WORKERS=1
 
-
 ## select which images you want to use.  these will be used later for a docker pull
 DR_SAGEMAKER_IMAGE=cpu-avx-mkl
 DR_ROBOMAKER_IMAGE=cpu-avx2
-
 
 ## check the s3 location for existing training folders
 ## automatically determine the latest training run (highest number), and set model parameters accordingly
@@ -50,7 +49,7 @@ LAST_TRAINING=$(echo $LAST_TRAINING | sed 's:/*$::')
 CONFIG_FILE="./run.env"
 OLD_SYSTEMENV="./system.env"
 
-## incorporate logic from increment.sh
+## incorporate logic from increment.sh, slightly modified to use last training 
 OPT_DELIM='-'
 ## Read in data
 CURRENT_RUN_MODEL=$(aws s3 ls $S3_LOCATION/rl-deepracer | sort -t - -k 3 -g | tail -n 1 | awk '{print $2}')
@@ -90,16 +89,17 @@ fi
 ## Replace dynamic parameters in run.env (still local to your directory)
 sed -i.bak -re "s:(DR_LOCAL_S3_PRETRAINED_PREFIX=).*$:\1$CURRENT_RUN_MODEL:g; s:(DR_LOCAL_S3_PRETRAINED=).*$:\1$PRETRAINED:g; ; s:(DR_LOCAL_S3_MODEL_PREFIX=).*$:\1$NEW_RUN_MODEL:g" "$CONFIG_FILE" && echo "Done."
 
-
 ## Replace static parameters in run.env (still local to your directory)
 sed -i.bak -re "s/(DR_UPLOAD_S3_PREFIX=).*$/\1$DR_UPLOAD_S3_PREFIX/g" "$CONFIG_FILE"
 sed -i.bak -re "s/(DR_WORLD_NAME=).*$/\1$WORLD_NAME/g" "$CONFIG_FILE"
-
 
 ## Replace static paramaters in system.env file, including sagemaker and robomaker images (still local to your directory) and the number of DR_workers
 sed -i.bak -re "s/(DR_UPLOAD_S3_BUCKET=).*$/\1$DR_UPLOAD_S3_BUCKET/g; s/(DR_SAGEMAKER_IMAGE=).*$/\1$DR_SAGEMAKER_IMAGE/g; s/(DR_ROBOMAKER_IMAGE=).*$/\1$DR_ROBOMAKER_IMAGE/g; s/(DR_WORKERS=).*$/\1$DR_WORKERS/g" "$OLD_SYSTEMENV"
 
 ## upload the new run.env and system.env files into your S3 bucket (same s3 location identified earlier)
+## files are loaded into the node-config folder/prefix.  You can also upload other files to node config, and they
+## will sync to the EC2 instance as part of the autorun script later.  If you add other files, make sure they are 
+## in node-config in the same directory structure as DRfc;   example:   s3location/node-config/scripts/training/.start.sh
 RUNENV_LOCATION=$S3_LOCATION/node-config/run.env
 SYSENV_LOCATION=$S3_LOCATION/node-config/system.env
 
@@ -113,7 +113,6 @@ aws s3 cp ./system.env s3://$SYSENV_LOCATION
 aws s3 cp ./model_metadata.json s3://$S3_LOCATION/custom_files/model_metadata.json
 aws s3 cp ./reward_function.py s3://$S3_LOCATION/custom_files/reward_function.py
 aws s3 cp ./hyperparameters.json s3://$S3_LOCATION/custom_files/hyperparameters.json
-
 
 ## launch an ec2
 ## update with your own settings, including key-name, security-group, and iam-instance-profile at a minimum
