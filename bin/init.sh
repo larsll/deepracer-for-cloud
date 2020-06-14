@@ -183,7 +183,6 @@ then
         aws s3 cp s3://$TRAINING_LOC/autorun.sh $INSTALL_DIR/bin/autorun.sh   
     fi
     chmod +x $INSTALL_DIR/bin/autorun.sh
-    #nohup bash -c "source $INSTALL_DIR/bin/autorun.sh" &
     bash -c "source $INSTALL_DIR/bin/autorun.sh"
 fi
 
