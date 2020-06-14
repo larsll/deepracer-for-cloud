@@ -7,10 +7,19 @@
 ##     Input security group, iam role, and key-name
 
 ## First you need to tell the script where in s3 your training will take place
-## can be either a bucket, or a bucket/prefix.  don't include the s3://
+## can be either a bucket at the root level, or a bucket/prefix.  don't include the s3://
 
 S3_LOCATION=<#########>
+## extract bucket location
 
+BUCKET=${S3_LOCATION%%/*}
+## extract prefix location
+if [[ "$S3_LOCATION" == *"/"* ]]
+then
+  PREFIX=${S3_LOCATION#*/}
+else
+  PREFIX=""
+fi
 
 ## Fill these out with your custom information if you want to upload and submit to leaderboard.  not required to run
 DR_UPLOAD_S3_PREFIX=########
@@ -32,51 +41,70 @@ DR_ROBOMAKER_IMAGE=cpu-avx2
 
 ## check the s3 location for existing training folders
 ## automatically determine the latest training run (highest number), and set model parameters accordingly
-## this script assumes the format rl-deepracer-1, rl-deepracer-2, etc.  modify here if your schema differs
-
+## this script assumes the format rl-deepracer-1, rl-deepracer-2, etc.  you will need to modify if your schema differs
 
 LAST_TRAINING=$(aws s3 ls $S3_LOCATION/rl-deepracer | sort -t - -k 3 -g | tail -n 1 | awk '{print $2}')
 ## drop trailing slash
 LAST_TRAINING=$(echo $LAST_TRAINING | sed 's:/*$::')
 
-if [ -z $LAST_TRAINING ]    ## check if null
-then     ## start a brand new training, no pretrained
-    PRETRAINED=False
-    MODEL_PREFIX=rl-deepracer-1
-    PRETRAINED_PREFIX=$MODEL_PREFIX   #dummy value, not used
-    echo No prior training found
-else       ## set pretrained values 
-    PRETRAINED=True
-    PRETRAINED_PREFIX=$LAST_TRAINING
-    CURRENT_RUN_MODEL_NUM=$(echo "${LAST_TRAINING}" | \
-       awk -v DELIM="-" '{ n=split($0,a,DELIM); if (a[n] ~ /[0-9]*/) print a[n]; else print ""; }')
-    NEW_RUN_MODEL_NUM=$(echo "${CURRENT_RUN_MODEL_NUM} + 1" | bc )
-    MODEL_PREFIX=$(echo $LAST_TRAINING | sed "s/${CURRENT_RUN_MODEL_NUM}/${NEW_RUN_MODEL_NUM}/")
-    echo Last training was $LAST_TRAINING so next training is $MODEL_PREFIX
-fi
-
-## create the modified run.env and system.env files
-## you need a template run.env and system.env stored somewhere locally
-## this script assumes they are stored in the same directory as this script for simplicity
-
-OLD_RUNENV="./run.env"
+CONFIG_FILE="./run.env"
 OLD_SYSTEMENV="./system.env"
 
-## Replace dynamic model paramemters inside run.env file (still local to your directory)
-sed -i.bak -re "s/(DR_LOCAL_S3_PRETRAINED_PREFIX=).*$/\1$PRETRAINED_PREFIX/g; s/(DR_LOCAL_S3_PRETRAINED=).*$/\1$PRETRAINED/g; s/(DR_LOCAL_S3_BUCKET=).*$/\1$S3_LOCATION/g; s/(DR_LOCAL_S3_MODEL_PREFIX=).*$/\1$MODEL_PREFIX/g" "$OLD_RUNENV"
+## incorporate logic from increment.sh
+OPT_DELIM='-'
+## Read in data
+CURRENT_RUN_MODEL=$(aws s3 ls $S3_LOCATION/rl-deepracer | sort -t - -k 3 -g | tail -n 1 | awk '{print $2}')
+## drop trailing slash
+CURRENT_RUN_MODEL=$(echo $LAST_TRAINING | sed 's:/*$::')
+## get number at the end
+CURRENT_RUN_MODEL_NUM=$(echo "${CURRENT_RUN_MODEL}" | \
+                    awk -v DELIM="${OPT_DELIM}" '{ n=split($0,a,DELIM); if (a[n] ~ /[0-9]*/) print a[n]; else print ""; }')
+
+if [ -z $LAST_TRAINING ]
+then
+    echo No prior training found
+    if [[ $PREFIX == "" ]]
+    then
+      NEW_RUN_MODEL=rl-deepracer-1
+    else
+      NEW_RUN_MODEL="$PREFIX/rl-deepracer-1"
+    fi
+    PRETRAINED=False
+    CURRENT_RUN_MODEL=$NEW_RUN_MODEL
+else
+
+    NEW_RUN_MODEL_NUM=$(echo "${CURRENT_RUN_MODEL_NUM} + 1" | bc )
+    PRETRAINED=True
+
+    if [[ $PREFIX == "" ]]
+    then
+      NEW_RUN_MODEL=$(echo $CURRENT_RUN_MODEL | sed "s/${CURRENT_RUN_MODEL_NUM}\$/${NEW_RUN_MODEL_NUM}/")
+    else
+      NEW_RUN_MODEL=$(echo $CURRENT_RUN_MODEL | sed "s/${CURRENT_RUN_MODEL_NUM}\$/${NEW_RUN_MODEL_NUM}/")     
+      NEW_RUN_MODEL="$PREFIX/$NEW_RUN_MODEL"
+      CURRENT_RUN_MODEL="$PREFIX/$CURRENT_RUN_MODEL"
+    fi
+    echo Last training was $CURRENT_RUN_MODEL so next training is $NEW_RUN_MODEL
+fi
+
+## Replace dynamic parameters in run.env (still local to your directory)
+sed -i.bak -re "s:(DR_LOCAL_S3_PRETRAINED_PREFIX=).*$:\1$CURRENT_RUN_MODEL:g; s:(DR_LOCAL_S3_PRETRAINED=).*$:\1$PRETRAINED:g; ; s:(DR_LOCAL_S3_MODEL_PREFIX=).*$:\1$NEW_RUN_MODEL:g" "$CONFIG_FILE" && echo "Done."
+
 
 ## Replace static parameters in run.env (still local to your directory)
-sed -i.bak -re "s/(DR_UPLOAD_S3_PREFIX=).*$/\1$DR_UPLOAD_S3_PREFIX/g" "$OLD_RUNENV"
-sed -i.bak -re "s/(DR_WORLD_NAME=).*$/\1$WORLD_NAME/g" "$OLD_RUNENV"
+sed -i.bak -re "s/(DR_UPLOAD_S3_PREFIX=).*$/\1$DR_UPLOAD_S3_PREFIX/g" "$CONFIG_FILE"
+sed -i.bak -re "s/(DR_WORLD_NAME=).*$/\1$WORLD_NAME/g" "$CONFIG_FILE"
 
 
 ## Replace static paramaters in system.env file, including sagemaker and robomaker images (still local to your directory) and the number of DR_workers
 sed -i.bak -re "s/(DR_UPLOAD_S3_BUCKET=).*$/\1$DR_UPLOAD_S3_BUCKET/g; s/(DR_SAGEMAKER_IMAGE=).*$/\1$DR_SAGEMAKER_IMAGE/g; s/(DR_ROBOMAKER_IMAGE=).*$/\1$DR_ROBOMAKER_IMAGE/g; s/(DR_WORKERS=).*$/\1$DR_WORKERS/g" "$OLD_SYSTEMENV"
 
+## upload the new run.env and system.env files into your S3 bucket (same s3 location identified earlier)
+RUNENV_LOCATION=$S3_LOCATION/node-config/run.env
+SYSENV_LOCATION=$S3_LOCATION/node-config/system.env
 
-## upload the new run.env and system.env files into your S3 location (same location identified at beginning of script)
-aws s3 cp ./run.env s3://$S3_LOCATION/node-config/run.env
-aws s3 cp ./system.env s3://$S3_LOCATION/node-config/system.env
+aws s3 cp ./run.env s3://$RUNENV_LOCATION
+aws s3 cp ./system.env s3://$SYSENV_LOCATION
 
 ## upload a custom autorun script to S3.  there is a default autorun script in the repo that will be used unless a custom one is specified here instead
 #aws s3 cp ./autorun.sh s3://$S3_LOCATION/autorun.sh
@@ -103,4 +131,4 @@ aws ec2 run-instances \
     --iam-instance-profile Arn=arn:aws:iam::<####acct_num####>:instance-profile/<####role_name####> \
     --instance-market-options MarketType=spot \
     --user-data "#!/bin/bash
-    su -c 'git clone https://github.com/larsll/deepracer-for-cloud.git && echo "$S3_LOCATION" > /home/ubuntu/deepracer-for-cloud/bin/s3_training_location.txt && /home/ubuntu/deepracer-for-cloud/bin/prepare.sh' - ubuntu"
+    su -c 'git clone https://github.com/larsll/deepracer-for-cloud.git && echo "$S3_LOCATION/node-config" > /home/ubuntu/deepracer-for-cloud/bin/s3_training_location.txt && /home/ubuntu/deepracer-for-cloud/bin/prepare.sh' - ubuntu"
