@@ -12,9 +12,8 @@ S3_LOCATION=$(awk 'NR==1 {print; exit}' s3_training_location.txt)
 
 source $INSTALL_DIR_TEMP/bin/activate.sh
 
-## get the updatated run.env and system.env files you created and stashed in s3
-aws s3 cp s3://$S3_LOCATION/node-config/run.env $INSTALL_DIR_TEMP/run.env
-aws s3 cp s3://$S3_LOCATION/node-config/system.env $INSTALL_DIR_TEMP/system.env
+## get the updatated run.env and system.env files and another others you stashed in s3
+aws s3 sync s3://$S3_LOCATION $INSTALL_DIR_TEMP
 
 ## get the right docker containers, if needed
 SYSENV="$INSTALL_DIR_TEMP/system.env"
