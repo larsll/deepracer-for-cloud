@@ -29,6 +29,5 @@ date | tee $INSTALL_DIR_TEMP/DONE-AUTORUN
 
 ## start training
 cd $INSTALL_DIR_TEMP/scripts/training 
-#nohup ./start.sh &
 ./start.sh
 
