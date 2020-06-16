@@ -13,7 +13,6 @@ Main differences to the work done by Alex is:
 	* `custom_files/hyperparameters.json` stores the runtime hyperparameters, which logically belongs together with the model_metadata.json and rewards.py files.
 	* `system.env` contains system-wide constants (expected to be configured only at setup)
 	* `run.env` contains user session configuration (pretraining, track etc.) as well as information about where to upload your model (S3 bucket and prefix).
-	* `docker/.env` remains the home for more static configuration. This is not expected to change between sessions.
 
 # Main Features
 
