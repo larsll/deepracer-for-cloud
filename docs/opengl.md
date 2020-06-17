@@ -13,8 +13,6 @@ On a Ubuntu desktop running Unity there are hardly any additional steps required
     * `DR_HOST_X=True`; uses the local X server rather than starting one within the docker container.
     * `DR_ROBOMAKER_IMAGE`; choose the tag for an OpenGL enabled image - e.g. `cpu-gl-avx` for an image where Tensorflow will use CPU or `gpu-gl` for an image where also Tensorflow will use the GPU.
 
-Before training run `xhost +` to ensure that the container is allowed to connect to the X server.
-
 With recent Nvidia drivers you can comfirm that the setup is working by running `nvidia-smi` on the host and see that `gzserver` is listed as running on the GPU. Older drivers (e.g. 390 for NVS 315) may not support showing which processes are running on the GPU.
 
 ## Headless Server
@@ -30,4 +28,4 @@ Also a headless server with a GPU, e.g. an EC2 instance, or a local computer wit
 
 Before training ensure that the server is running, including VNC if you want to connect. `utils\start-xorg.sh` is provided as sample.
 
-With recent Nvidia drivers you can comfirm that the setup is working by running `nvidia-smi` on the host and see that `gzserver` is listed as running on the GPU.
+With recent Nvidia drivers you can confirm that the setup is working by running `nvidia-smi` on the host and see that `gzserver` is listed as running on the GPU.
