@@ -1,6 +1,6 @@
 # GPU Accelerated OpenGL for Robomaker
 
-One way to improve performance, especially of Robomaker, is to enable GPU-accelerated OpenGL. Specifically OpenGL can significantly improve Gazebo performance, even where the GPU does not have enough GPU RAM, or is too old, to support Tensorflow.
+One way to improve performance, especially of Robomaker, is to enable GPU-accelerated OpenGL. OpenGL can significantly improve Gazebo performance, even where the GPU does not have enough GPU RAM, or is too old, to support Tensorflow.
 
 ## Desktop 
 
