@@ -86,3 +86,31 @@ with open(local_yaml_path, 'w') as yaml_file:
     yaml.dump(config, yaml_file, default_flow_style=False, default_style='\'', explicit_start=True)
 
 s3_client.upload_file(Bucket=s3_bucket, Key=yaml_key, Filename=local_yaml_path)
+
+
+# Multi track training.  
+config['MULTI_TRACK'] = os.environ.get('DR_MULTI_TRACK', 'False')
+
+if config['MULTI_TRACK'] == "True":
+
+    num_workers = int(os.environ.get('DR_WORKERS',1))
+
+    for i in range(1,num_workers+1,1):
+
+        config.update({'WORLD_NAME': os.environ.get('DR_MT_WORLD_NAME_%d' % i)})
+
+        #split string s3_yaml_name, insert the worker number, and add back on the .yaml extension
+        s3_yaml_name_list = s3_yaml_name.split('.')
+        s3_yaml_name_temp = s3_yaml_name_list[0] + "_%d.yaml" % i
+
+
+        #upload additional training params files
+        yaml_key = os.path.normpath(os.path.join(s3_prefix, s3_yaml_name_temp))
+
+        local_yaml_path = os.path.abspath(os.path.join(os.environ.get('DR_DIR'),'tmp', 'training-params-' + str(round(time.time())) + '.yaml'))
+
+        with open(local_yaml_path, 'w') as yaml_file:
+            yaml.dump(config, yaml_file, default_flow_style=False, default_style='\'', explicit_start=True)
+
+        s3_client.upload_file(Bucket=s3_bucket, Key=yaml_key, Filename=local_yaml_path)
+
