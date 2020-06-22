@@ -80,6 +80,19 @@ function dr-stop-loganalysis {
 
 function dr-logs-sagemaker {
 
+    SAGEMAKER_CONTAINER=$(dr-find-sagemaker)
+
+    if [[ -n $SAGEMAKER_CONTAINER ]];
+    then
+      docker logs -f $CONTAINER
+    else
+        echo "Sagemaker is not running."
+    fi
+
+}
+
+function dr-find-sagemaker {
+
     STACK_NAME="deepracer-$DR_RUN_ID"
     RUN_NAME=${DR_LOCAL_S3_MODEL_PREFIX}
 
@@ -93,11 +106,10 @@ function dr-logs-sagemaker {
             COMPOSE_SERVICE_NAME=$(echo $CONTAINER_NAME | perl -n -e'/(.*)_(algo(.*))_./; print $2')
             COMPOSE_FILE=$(sudo find /tmp/sagemaker -name docker-compose.yaml -exec grep -l "$RUN_NAME" {} + | grep $CONTAINER_PREFIX)
             if [[ -n $COMPOSE_FILE ]]; then
-                docker logs -f $CONTAINER
+                echo $CONTAINER
+                return
             fi
         done
-    else
-        echo "Sagemaker is not running."
     fi
 
 }

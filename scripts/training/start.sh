@@ -3,8 +3,11 @@
 source $DR_DIR/bin/scripts_wrapper.sh
 
 usage(){
-	echo "Usage: $0 [-w]"
+	echo "Usage: $0 [-w] [-q | -s | -r [n]]"
   echo "       -w        Wipes the target AWS DeepRacer model structure before upload."
+  echo "       -q        Do not output / follow a log when starting."
+  echo "       -s        Follow Sagemaker logs (default)."
+  echo "       -r [n]    Follow Robomaker logs for worker n (default worker 0 / replica 1)."
 	exit 1
 }
 
@@ -15,10 +18,22 @@ function ctrl_c() {
         exit 1
 }
 
-while getopts ":wh" opt; do
+while getopts ":whqsr:" opt; do
 case $opt in
 w) OPT_WIPE="WIPE"
 ;;
+q) OPT_QUIET="QUIET"
+;;
+s) OPT_SAGEMAKER="SAGEMAKER"
+;;
+r)  # Check if value is in numeric format.
+    if [[ $OPTARG =~ ^[0-9]+$ ]]; then
+        OPT_ROBOMAKER=$OPTARG
+    else
+        OPT_ROBOMAKER=0
+        ((OPTIND--))
+    fi
+;;  
 h) usage
 ;;
 \?) echo "Invalid option -$OPTARG" >&2
@@ -87,10 +102,25 @@ else
   docker-compose $COMPOSE_FILES -p $STACK_NAME --log-level ERROR up -d --scale robomaker=$DR_WORKERS
 fi
 
+# Request to be quiet. Quitting here.
+if [ -n "$OPT_QUIET" ]; then
+  exit 0
+fi
+
 echo 'Waiting for containers to start up...'
+WAIT_TIME=15
 
 #sleep for 20 seconds to allow the containers to start
-sleep 15
+until [ -n "$SAGEMAKER_CONTAINER" ]
+do
+  sleep 1
+  ((WAIT_TIME--))
+  if [ "$WAIT_TIME" -lt 1 ]; then
+    echo "Sagemaker is not running."
+    exit 1
+  fi
+  SAGEMAKER_CONTAINER=$(dr-find-sagemaker)
+done
 
 if xhost >& /dev/null;
 then
