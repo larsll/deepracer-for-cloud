@@ -80,14 +80,55 @@ function dr-stop-loganalysis {
 
 function dr-logs-sagemaker {
 
-    SAGEMAKER_CONTAINER=$(dr-find-sagemaker)
+  while getopts "w:" opt; do
+  case $opt in
+  w) OPT_WAIT=$OPTARG
+  ;;
+  \?) echo "Invalid option -$OPTARG" >&2
+  ;;
+  esac
+  done
 
-    if [[ -n $SAGEMAKER_CONTAINER ]];
-    then
-      docker logs -f $CONTAINER
+  SAGEMAKER_CONTAINER=$(dr-find-sagemaker)
+
+  if [[ -z "$SAGEMAKER_CONTAINER" ]];
+  then
+    if [[ -n "OPT_WAIT" ]]; then
+      echo 'Waiting for Sagemaker to start up...'
+      WAIT_TIME=$OPT_WAIT
+      until [ -n "$SAGEMAKER_CONTAINER" ]
+      do
+        sleep 1
+        ((WAIT_TIME--))
+        if [ "$WAIT_TIME" -lt 1 ]; then
+          echo "Sagemaker is not running."
+          exit 1
+        fi
+        SAGEMAKER_CONTAINER=$(dr-find-sagemaker)
+      done
     else
-        echo "Sagemaker is not running."
+      echo "Sagemaker is not running."
+      exit 1
     fi
+  fi
+
+  if [[ "${DR_HOST_X,,}" == "true" && -n "$DISPLAY" ]];
+  then
+    if [ -x "$(command -v gnome-terminal)" ]; 
+    then
+      gnome-terminal --tab --title "DR-${DR_RUN_ID}: Sagemaker - ${SAGEMAKER_CONTAINER}" -- /usr/bin/bash -c "!!; docker logs -f ${SAGEMAKER_CONTAINER}" 2> /dev/null
+      echo "Sagemaker container $SAGEMAKER_CONTAINER logs opened in separate gnome-terminal. "
+    elif [ -x "$(command -v x-terminal-emulator)" ]; 
+    then
+      x-terminal-emulator -e /bin/sh -c "!!; docker logs -f ${SAGEMAKER_CONTAINER}" 2> /dev/null
+      echo "Sagemaker container $SAGEMAKER_CONTAINER logs opened in separate terminal. "      
+    else
+      echo 'Could not find a defined x-terminal-emulator. Displaying inline.'
+      docker logs -f $SAGEMAKER_CONTAINER
+    fi
+  else
+      docker logs -f $SAGEMAKER_CONTAINER
+  fi
 
 }
 

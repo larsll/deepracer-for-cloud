@@ -107,46 +107,10 @@ if [ -n "$OPT_QUIET" ]; then
   exit 0
 fi
 
-echo 'Waiting for containers to start up...'
-WAIT_TIME=15
-
-#sleep for 20 seconds to allow the containers to start
-until [ -n "$SAGEMAKER_CONTAINER" ]
-do
-  sleep 1
-  ((WAIT_TIME--))
-  if [ "$WAIT_TIME" -lt 1 ]; then
-    echo "Sagemaker is not running."
-    exit 1
-  fi
-  SAGEMAKER_CONTAINER=$(dr-find-sagemaker)
-done
-
-if xhost >& /dev/null;
-then
-  echo "Display exists, using gnome-terminal for logs and starting vncviewer."
-  if ! [ -x "$(command -v gnome-terminal)" ]; 
-  then
-    echo 'Error: skip showing sagemaker logs because gnome-terminal is not installed.  This is normal if you are on a different OS to Ubuntu.'
-  else	
-    echo 'attempting to pull up sagemaker logs...'
-    gnome-terminal -x sh -c "!!; docker logs -f $(docker ps -a | awk ' /sagemaker/ { print $1 }')"
-  fi
-
-  if ! [ -x "$(command -v gnome-terminal)" ]; 
-  then
-    if ! [ -x "$(command -v vncviewer)" ]; 
-    then
-      echo 'Error: vncviewer is not present on the PATH.  Make sure you install it and add it to the PATH.'
-    else	
-      echo 'attempting to open vnc viewer...'
-      vncviewer localhost:8080
-    fi
-  else	
-    echo 'attempting to open vnc viewer...'
-    gnome-terminal -x sh -c "!!; vncviewer localhost:8080"
-  fi
-else
-  echo "No display. Falling back to CLI mode."
-  dr-logs-sagemaker
+# Trigger requested log-file
+if [ -n "$OPT_ROBOMAKER" ]; then
+  dr-logs-robomaker -n $OPT_ROBOMAKER
+elif [ -n "$OPT_SAGEMAKER" ]; then
+  dr-logs-sagemaker -w 15
 fi
+
