@@ -44,7 +44,7 @@ function dr-download-custom-files {
 
 function dr-start-training {
   dr-update-env
-  bash -c "cd $DIR/scripts/training && ./start.sh $@"
+  $DIR/scripts/training/start.sh "$@"
 }
 
 function dr-increment-training {
@@ -201,11 +201,11 @@ function dr-logs-robomaker {
     if [ -x "$(command -v gnome-terminal)" ]; 
     then
       gnome-terminal --tab --title "DR-${DR_RUN_ID}: Robomaker #${OPT_REPLICA} - ${ROBOMAKER_CONTAINER}" -- /usr/bin/bash -c "!!; docker logs -f ${ROBOMAKER_CONTAINER}" 2> /dev/null
-      echo "Robomaker #${OPT_REPLICA} container $ROBOMAKER_CONTAINER logs opened in separate gnome-terminal. "
+      echo "Robomaker #${OPT_REPLICA} ($ROBOMAKER_CONTAINER) logs opened in separate gnome-terminal. "
     elif [ -x "$(command -v x-terminal-emulator)" ]; 
     then
       x-terminal-emulator -e /bin/sh -c "!!; docker logs -f ${ROBOMAKER_CONTAINER}" 2> /dev/null
-      echo "Robomaker #${OPT_REPLICA} container $ROBOMAKER_CONTAINER logs opened in separate terminal. "
+      echo "Robomaker #${OPT_REPLICA} ($ROBOMAKER_CONTAINER) logs opened in separate terminal. "
     else
       echo 'Could not find a defined x-terminal-emulator. Displaying inline.'
       docker logs -f $ROBOMAKER_CONTAINER

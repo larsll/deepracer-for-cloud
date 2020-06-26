@@ -1,9 +1,9 @@
-#!/usr/bin/env bash
+#!/usr/bin/bash
 
 source $DR_DIR/bin/scripts_wrapper.sh
 
 usage(){
-	echo "Usage: $0 [-w] [-q | -s | -r [n]]"
+	echo "Usage: $0 [-w] [-q | -s | -r [n] | -a ]"
   echo "       -w        Wipes the target AWS DeepRacer model structure before upload."
   echo "       -q        Do not output / follow a log when starting."
   echo "       -a        Follow all Sagemaker and Robomaker logs."
@@ -21,7 +21,7 @@ function ctrl_c() {
 
 OPT_DISPLAY="SAGEMAKER"
 
-while getopts ":whqsr:" opt; do
+while getopts ":whqsar:" opt; do
 case $opt in
 w) OPT_WIPE="WIPE"
 ;;
@@ -100,7 +100,7 @@ fi
 export DR_CURRENT_PARAMS_FILE=${DR_LOCAL_S3_TRAINING_PARAMS_FILE}
 
 echo "Creating Robomaker configuration in $S3_PATH/$DR_LOCAL_S3_TRAINING_PARAMS_FILE"
-python3 prepare-config.py
+python3 $DR_DIR/scripts/training/prepare-config.py
 
 # Check if we will use Docker Swarm or Docker Compose
 if [[ "${DR_DOCKER_STYLE,,}" == "swarm" ]];
@@ -116,10 +116,10 @@ if [ -n "$OPT_QUIET" ]; then
 fi
 
 # Trigger requested log-file
-if [[ "${OPT_DISPLAY,,}" == "all" && -n "${DISPLAY}" && "${DR_HOST_X,,}" == "true "]]; then
+if [[ "${OPT_DISPLAY,,}" == "all" && -n "${DISPLAY}" && "${DR_HOST_X,,}" == "true" ]]; then
   dr-logs-sagemaker -w 15
-  if [ "$DR_WORKERS" -gt 1 ]; then
-    for i in {1..${DR_WORKERS}}
+  if [ "${DR_WORKERS}" -gt 1 ]; then
+    for i in $(seq 1 ${DR_WORKERS})
     do
       dr-logs-robomaker -w 15 -n $i
     done    
