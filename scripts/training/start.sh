@@ -6,6 +6,7 @@ usage(){
 	echo "Usage: $0 [-w] [-q | -s | -r [n]]"
   echo "       -w        Wipes the target AWS DeepRacer model structure before upload."
   echo "       -q        Do not output / follow a log when starting."
+  echo "       -a        Follow all Sagemaker and Robomaker logs."
   echo "       -s        Follow Sagemaker logs (default)."
   echo "       -r [n]    Follow Robomaker logs for worker n (default worker 0 / replica 1)."
 	exit 1
@@ -18,15 +19,20 @@ function ctrl_c() {
         exit 1
 }
 
+OPT_DISPLAY="SAGEMAKER"
+
 while getopts ":whqsr:" opt; do
 case $opt in
 w) OPT_WIPE="WIPE"
 ;;
 q) OPT_QUIET="QUIET"
 ;;
-s) OPT_SAGEMAKER="SAGEMAKER"
+s) OPT_DISPLAY="SAGEMAKER"
+;;
+a) OPT_DISPLAY="ALL"
 ;;
 r)  # Check if value is in numeric format.
+    OPT_DISPLAY="ROBOMAKER"
     if [[ $OPTARG =~ ^[0-9]+$ ]]; then
         OPT_ROBOMAKER=$OPTARG
     else
@@ -43,7 +49,9 @@ esac
 done
 
 # Ensure Sagemaker's folder is there
-sudo mkdir -p /tmp/sagemaker
+if [ ! -d /tmp/sagemaker ]; then
+  sudo mkdir -p /tmp/sagemaker
+fi
 
 #Check if files are available
 S3_PATH="s3://$DR_LOCAL_S3_BUCKET/$DR_LOCAL_S3_MODEL_PREFIX"
@@ -108,9 +116,19 @@ if [ -n "$OPT_QUIET" ]; then
 fi
 
 # Trigger requested log-file
-if [ -n "$OPT_ROBOMAKER" ]; then
-  dr-logs-robomaker -n $OPT_ROBOMAKER
-elif [ -n "$OPT_SAGEMAKER" ]; then
+if [[ "${OPT_DISPLAY,,}" == "all" && -n "${DISPLAY}" && "${DR_HOST_X,,}" == "true "]]; then
+  dr-logs-sagemaker -w 15
+  if [ "$DR_WORKERS" -gt 1 ]; then
+    for i in {1..${DR_WORKERS}}
+    do
+      dr-logs-robomaker -w 15 -n $i
+    done    
+  else
+    dr-logs-robomaker -w 15
+  fi
+elif [[ "${OPT_DISPLAY,,}" == "robomaker" ]]; then
+  dr-logs-robomaker -w 15 -n $OPT_ROBOMAKER
+elif [[ "${OPT_DISPLAY,,}" == "sagemaker" ]]; then
   dr-logs-sagemaker -w 15
 fi
 
