@@ -57,7 +57,7 @@ function dr-stop-training {
 
 function dr-start-evaluation {
   dr-update-env
-  bash -c "cd $DIR/scripts/evaluation && ./start.sh $@"
+  $DIR/scripts/evaluation/start.sh "$@"
 }
 
 function dr-stop-evaluation {
@@ -162,18 +162,20 @@ function dr-logs-robomaker {
   OPT_REPLICA=1
   local OPTIND
 
-  while getopts ":w:n:" opt; do
+  while getopts ":w:n:e" opt; do
   case $opt in
   w) OPT_WAIT=$OPTARG
   ;;
   n) OPT_REPLICA=$OPTARG
   ;;
+  e) OPT_EVAL="-e"
+  ;;  
   \?) echo "Invalid option -$OPTARG" >&2
   ;;
   esac
   done
 
-  ROBOMAKER_CONTAINER=$(dr-find-robomaker -n ${OPT_REPLICA})
+  ROBOMAKER_CONTAINER=$(dr-find-robomaker -n ${OPT_REPLICA} ${OPT_EVAL})
 
   if [[ -z "$ROBOMAKER_CONTAINER" ]];
   then
@@ -220,16 +222,20 @@ function dr-find-robomaker {
 
   local OPTIND
 
-  while getopts ":n:" opt; do
+  OPT_PREFIX="deepracer"
+
+  while getopts ":n:e" opt; do
   case $opt in
   n) OPT_REPLICA=$OPTARG
   ;;
+  e) OPT_PREFIX="-eval"
+  ;;  
   \?) echo "Invalid option -$OPTARG" >&2
   ;;
   esac
   done
 
-  eval ROBOMAKER_ID=$(docker ps | grep "deepracer-${DR_RUN_ID}_robomaker.${OPT_REPLICA}" | cut -f1 -d\  | head -1)
+  eval ROBOMAKER_ID=$(docker ps | grep "${OPT_PREFIX}-${DR_RUN_ID}_robomaker.${OPT_REPLICA}" | cut -f1 -d\  | head -1)
   if [ -n "$ROBOMAKER_ID" ]; then
     echo $ROBOMAKER_ID
   else
