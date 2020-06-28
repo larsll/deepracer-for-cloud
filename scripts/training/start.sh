@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 source $DR_DIR/bin/scripts_wrapper.sh
 
