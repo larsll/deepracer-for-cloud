@@ -279,9 +279,7 @@ function dr-logs-loganalysis {
 function dr-url-loganalysis {
   eval LOG_ANALYSIS_ID=$(docker ps | awk ' /loganalysis/ { print $1 }')
   if [ -n "$LOG_ANALYSIS_ID" ]; then
-    eval URL=$(docker logs $LOG_ANALYSIS_ID | perl -n -e'/(http:\/\/127\.0\.0\.1\:8888\/\?.*)/; print $1')
-    echo "Log-analysis URL:"
-    echo $URL
+    docker exec "$LOG_ANALYSIS_ID" bash -c "source .venv/bin/activate && jupyter notebook list"
   else
     echo "Log-analysis is not running."
   fi
