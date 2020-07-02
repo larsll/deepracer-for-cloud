@@ -16,6 +16,6 @@ Example: With 3 workers set `num_episodes_between_training: 30` and `DR_TRAIN_RO
 
 Note; Sagemaker will stop collecting experiences once you have reached 10.000 steps (3-layer CNN) in an iteration. For longer tracks with 600-1000 steps per completed episodes this will define the upper bound for the number of workers and episodes per iteration.
 
-## Training on different tracks concurrently
+## Training with different parameters for each worker
 
-It is also possible to use different tracks (WORLD_NAME) on each of the individual robomaker workers.  To enable, simple set DR_MULTI_TRACK=True inside run.env, then update DR_MT_WORLD_NAME_1 (etc) with the desired tracks.  This only takes effect if you are training with multiple workers, and will take precedence over the DR_WORLD_NAME parameter.  
+It is also possible to use different configurations between workers, such as different tracks (WORLD_NAME).  To enable, set DR_MULTI_CONFIG=True inside run.env, then make copies of run.env in the format worker2-run.env, worker3-run.env, etc.   Modify the worker<#>-run.env file with your desired changes.  These files are only used if you are training with multiple workers.
