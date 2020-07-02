@@ -69,8 +69,8 @@ if [ "$DR_WORKERS" -gt 1 ]; then
     COMPOSE_FILES="$COMPOSE_FILES $DR_DOCKER_FILE_SEP $DR_DIR/docker/docker-compose-robomaker-multi.yml"
   fi
 
-  if [ "$DR_MULTI_TRACK" == "True" ]; then
-    echo "Multi-track training"
+  if [ "$DR_MULTI_CONFIG" == "True" ]; then
+    echo "Multi-config training"
 
     i=1
     while [[ $i -le $DR_WORKERS ]] 
@@ -89,10 +89,13 @@ if [ "$DR_WORKERS" -gt 1 ]; then
     export MT_S3_TRAINING_PARAMS_FILE_7=$MT_S3_TRAINING_PARAMS_FILE_7
     export MT_S3_TRAINING_PARAMS_FILE_8=$MT_S3_TRAINING_PARAMS_FILE_8
 
+    # read in multiconfig.txt file, and export the world files
+    source multiconfig.txt 
+
     # this command tells the robomaker worker which world_name and params_file to use
     export ROBOMAKER_COMMAND='if [[ "$DOCKER_REPLICA_SLOT" == *"1"* ]]; then export WORLD_NAME=$DR_MT_WORLD_NAME_1; export S3_YAML_NAME=$MT_S3_TRAINING_PARAMS_FILE_1; elif [[ "$DOCKER_REPLICA_SLOT" == *"2"* ]]; then export WORLD_NAME=$DR_MT_WORLD_NAME_2; export S3_YAML_NAME=$MT_S3_TRAINING_PARAMS_FILE_2; elif [[ "$DOCKER_REPLICA_SLOT" == *"3"* ]]; then export WORLD_NAME=$DR_MT_WORLD_NAME_3; export S3_YAML_NAME=$MT_S3_TRAINING_PARAMS_FILE_3; elif [[ "$DOCKER_REPLICA_SLOT" == *"4"* ]]; then export WORLD_NAME=$DR_MT_WORLD_NAME_4; export S3_YAML_NAME=$MT_S3_TRAINING_PARAMS_FILE_4; elif [[ "$DOCKER_REPLICA_SLOT" == *"5"* ]]; then export WORLD_NAME=$DR_MT_WORLD_NAME_5; export S3_YAML_NAME=$MT_S3_TRAINING_PARAMS_FILE_5; elif [[ "$DOCKER_REPLICA_SLOT" == *"6"* ]]; then export WORLD_NAME=$DR_MT_WORLD_NAME_6; export S3_YAML_NAME=$MT_S3_TRAINING_PARAMS_FILE_6; elif [[ "$DOCKER_REPLICA_SLOT" == *"7"* ]]; then export WORLD_NAME=$DR_MT_WORLD_NAME_7; export S3_YAML_NAME=$MT_S3_TRAINING_PARAMS_FILE_7; elif [[ "$DOCKER_REPLICA_SLOT" == *"8"* ]]; then export WORLD_NAME=$DR_MT_WORLD_NAME_8; export S3_YAML_NAME=$MT_S3_TRAINING_PARAMS_FILE_8; fi && ./run.sh multi distributed_training.launch'
-  COMPOSE_FILES="$COMPOSE_FILES $DR_DOCKER_FILE_SEP $DR_DIR/docker/docker-compose-multitrack.yml"
-  else   # not multi track training
+  COMPOSE_FILES="$COMPOSE_FILES $DR_DOCKER_FILE_SEP $DR_DIR/docker/docker-compose-multiconfig.yml"
+  else   # not multi config training
     export ROBOMAKER_COMMAND="./run.sh multi distributed_training.launch"
   fi
 else
