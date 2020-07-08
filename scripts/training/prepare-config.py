@@ -89,7 +89,7 @@ s3_client.upload_file(Bucket=s3_bucket, Key=yaml_key, Filename=local_yaml_path)
 
 
 # Training with different configurations on each worker (aka Multi Config training)
-config['MULTI_CONFIG'] = os.environ.get('DR_MULTI_CONFIG', 'False')
+config['MULTI_CONFIG'] = os.environ.get('DR_TRAIN_MULTI_CONFIG', 'False')
 
 if config['MULTI_CONFIG'] == "True":
     num_workers = int(os.environ.get('DR_WORKERS',1))
@@ -104,10 +104,12 @@ if config['MULTI_CONFIG'] == "True":
             yaml_key = os.path.normpath(os.path.join(s3_prefix, s3_yaml_name_temp))
             s3_client.upload_file(Bucket=s3_bucket, Key=yaml_key, Filename=local_yaml_path)
 
-            file1 = open("multiconfig.txt", "w")
+            multiconfigpath = os.path.abspath(os.path.join(os.environ.get('DR_DIR'),'tmp', 'multiconfig.txt'))
+
+            f = open(multiconfigpath, "w")
             L = os.environ.get('DR_WORLD_NAME')
-            file1.write("export DR_MT_WORLD_NAME_%d=%s" % (i,L))
-            file1.close()
+            f.write("export DR_MT_WORLD_NAME_%d=%s" % (i,L))
+            f.close()
 
         else:  # i >= 2 
             #read in additional configuration file.  format of file must be worker#-run.env
@@ -156,8 +158,10 @@ if config['MULTI_CONFIG'] == "True":
                 config.update({'NUMBER_OF_BOT_CARS': '0'})
                 config.update({'NUMBER_OF_OBSTACLES': '0'})
 
+            multiconfigpath = os.path.abspath(os.path.join(os.environ.get('DR_DIR'),'tmp', 'multiconfig.txt'))
+
             # Write World Names to file for environment export later in start.sh
-            f = open("multiconfig.txt", "a")
+            f = open(multiconfigpath, "a")
             L = os.environ.get('DR_WORLD_NAME')
             f.write("\n")
             f.write("export DR_MT_WORLD_NAME_%d=%s" % (i,L))
