@@ -103,7 +103,7 @@ if config['MULTI_CONFIG'] == "True":
             #upload additional training params files
             yaml_key = os.path.normpath(os.path.join(s3_prefix, s3_yaml_name_temp))
             s3_client.upload_file(Bucket=s3_bucket, Key=yaml_key, Filename=local_yaml_path)
-
+            
             multiconfigpath = os.path.abspath(os.path.join(os.environ.get('DR_DIR'),'tmp', 'multiconfig.txt'))
 
             f = open(multiconfigpath, "w")
