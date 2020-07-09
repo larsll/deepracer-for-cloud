@@ -104,7 +104,7 @@ if config['MULTI_CONFIG'] == "True":
             yaml_key = os.path.normpath(os.path.join(s3_prefix, s3_yaml_name_temp))
             s3_client.upload_file(Bucket=s3_bucket, Key=yaml_key, Filename=local_yaml_path)
             
-            multiconfigpath = os.path.abspath(os.path.join(os.environ.get('DR_DIR'),'tmp', 'multiconfig.txt'))
+            multiconfigpath = os.path.abspath(os.path.join(os.environ.get('DR_DIR'),'tmp', '{}-multiconfig.txt'.format(os.environ.get('DR_RUN_ID'))))
 
             f = open(multiconfigpath, "w")
             L = os.environ.get('DR_WORLD_NAME')
@@ -158,7 +158,7 @@ if config['MULTI_CONFIG'] == "True":
                 config.update({'NUMBER_OF_BOT_CARS': '0'})
                 config.update({'NUMBER_OF_OBSTACLES': '0'})
 
-            multiconfigpath = os.path.abspath(os.path.join(os.environ.get('DR_DIR'),'tmp', 'multiconfig.txt'))
+            multiconfigpath = os.path.abspath(os.path.join(os.environ.get('DR_DIR'),'tmp', '{}-multiconfig.txt'.format(os.environ.get('DR_RUN_ID'))))
 
             # Write World Names to file for environment export later in start.sh
             f = open(multiconfigpath, "a")
