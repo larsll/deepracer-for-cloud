@@ -85,7 +85,7 @@ STACK_NAME="deepracer-$DR_RUN_ID"
 export DR_CURRENT_PARAMS_FILE=${DR_LOCAL_S3_TRAINING_PARAMS_FILE}
 
 echo "Creating Robomaker configuration in $S3_PATH/$DR_LOCAL_S3_TRAINING_PARAMS_FILE"
-python3 prepare-config.py
+WORKER_CONFIG=$(python3 $DR_DIR/scripts/training/prepare-config.py)
 
 if [ "$DR_WORKERS" -gt 1 ]; then
   echo "Starting $DR_WORKERS workers"
@@ -99,33 +99,10 @@ if [ "$DR_WORKERS" -gt 1 ]; then
 
   if [ "$DR_TRAIN_MULTI_CONFIG" == "True" ]; then
     echo "Multi-config training"
-
-    i=1
-    while [[ $i -le $DR_WORKERS ]] 
-    do
-        YAML_ARRAY[$i]=$(echo ${DR_LOCAL_S3_TRAINING_PARAMS_FILE} | sed s/.yaml/_$i.yaml/)
-        declare "MT_S3_TRAINING_PARAMS_FILE_$i=${YAML_ARRAY[$i]}"
-        ((i = i + 1))
-    done
-
-    export MT_S3_TRAINING_PARAMS_FILE_1=$MT_S3_TRAINING_PARAMS_FILE_1
-    export MT_S3_TRAINING_PARAMS_FILE_2=$MT_S3_TRAINING_PARAMS_FILE_2
-    export MT_S3_TRAINING_PARAMS_FILE_3=$MT_S3_TRAINING_PARAMS_FILE_3
-    export MT_S3_TRAINING_PARAMS_FILE_4=$MT_S3_TRAINING_PARAMS_FILE_4
-    export MT_S3_TRAINING_PARAMS_FILE_5=$MT_S3_TRAINING_PARAMS_FILE_5
-    export MT_S3_TRAINING_PARAMS_FILE_6=$MT_S3_TRAINING_PARAMS_FILE_6
-    export MT_S3_TRAINING_PARAMS_FILE_7=$MT_S3_TRAINING_PARAMS_FILE_7
-    export MT_S3_TRAINING_PARAMS_FILE_8=$MT_S3_TRAINING_PARAMS_FILE_8
-
-    # read in multiconfig.txt file, and export the world file
-    source $DR_DIR/tmp/$DR_RUN_ID-multiconfig.txt
-
-    # this command tells the robomaker worker which world_name and params_file to use
-    export ROBOMAKER_COMMAND='if [[ "$DOCKER_REPLICA_SLOT" == *"1"* ]]; then export WORLD_NAME=$DR_MT_WORLD_NAME_1; export S3_YAML_NAME=$MT_S3_TRAINING_PARAMS_FILE_1; elif [[ "$DOCKER_REPLICA_SLOT" == *"2"* ]]; then export WORLD_NAME=$DR_MT_WORLD_NAME_2; export S3_YAML_NAME=$MT_S3_TRAINING_PARAMS_FILE_2; elif [[ "$DOCKER_REPLICA_SLOT" == *"3"* ]]; then export WORLD_NAME=$DR_MT_WORLD_NAME_3; export S3_YAML_NAME=$MT_S3_TRAINING_PARAMS_FILE_3; elif [[ "$DOCKER_REPLICA_SLOT" == *"4"* ]]; then export WORLD_NAME=$DR_MT_WORLD_NAME_4; export S3_YAML_NAME=$MT_S3_TRAINING_PARAMS_FILE_4; elif [[ "$DOCKER_REPLICA_SLOT" == *"5"* ]]; then export WORLD_NAME=$DR_MT_WORLD_NAME_5; export S3_YAML_NAME=$MT_S3_TRAINING_PARAMS_FILE_5; elif [[ "$DOCKER_REPLICA_SLOT" == *"6"* ]]; then export WORLD_NAME=$DR_MT_WORLD_NAME_6; export S3_YAML_NAME=$MT_S3_TRAINING_PARAMS_FILE_6; elif [[ "$DOCKER_REPLICA_SLOT" == *"7"* ]]; then export WORLD_NAME=$DR_MT_WORLD_NAME_7; export S3_YAML_NAME=$MT_S3_TRAINING_PARAMS_FILE_7; elif [[ "$DOCKER_REPLICA_SLOT" == *"8"* ]]; then export WORLD_NAME=$DR_MT_WORLD_NAME_8; export S3_YAML_NAME=$MT_S3_TRAINING_PARAMS_FILE_8; fi && ./run.sh multi distributed_training.launch'
-  COMPOSE_FILES="$COMPOSE_FILES $DR_DOCKER_FILE_SEP $DR_DIR/docker/docker-compose-multiconfig.yml"
-  else   # not multi config training
-    export ROBOMAKER_COMMAND="./run.sh multi distributed_training.launch"
+    export MULTI_CONFIG=$WORKER_CONFIG
   fi
+  export ROBOMAKER_COMMAND="./run.sh multi distributed_training.launch"
+
 else
   export ROBOMAKER_COMMAND="./run.sh run distributed_training.launch"
 fi

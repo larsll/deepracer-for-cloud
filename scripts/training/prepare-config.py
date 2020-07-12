@@ -93,6 +93,8 @@ config['MULTI_CONFIG'] = os.environ.get('DR_TRAIN_MULTI_CONFIG', 'False')
 
 if config['MULTI_CONFIG'] == "True":
     num_workers = int(os.environ.get('DR_WORKERS',1))
+    multi_config = {}
+    multi_config['multi_config'] = [None] * num_workers
 
     for i in range(1,num_workers+1,1):
         if i == 1:
@@ -102,18 +104,15 @@ if config['MULTI_CONFIG'] == "True":
 
             #upload additional training params files
             yaml_key = os.path.normpath(os.path.join(s3_prefix, s3_yaml_name_temp))
-            s3_client.upload_file(Bucket=s3_bucket, Key=yaml_key, Filename=local_yaml_path)
-            
-            multiconfigpath = os.path.abspath(os.path.join(os.environ.get('DR_DIR'),'tmp', '{}-multiconfig.txt'.format(os.environ.get('DR_RUN_ID'))))
+            s3_client.upload_file(Bucket=s3_bucket, Key=yaml_key, Filename=local_yaml_path)            
 
-            f = open(multiconfigpath, "w")
-            L = os.environ.get('DR_WORLD_NAME')
-            f.write("export DR_MT_WORLD_NAME_%d=%s" % (i,L))
-            f.close()
+            # Store in multi_config array
+            multi_config['multi_config'][i - 1] = {'config_file': s3_yaml_name_temp,
+                                                             'world_name': config['WORLD_NAME']}
 
         else:  # i >= 2 
             #read in additional configuration file.  format of file must be worker#-run.env
-            location = '../../worker{}-run.env'.format(i)
+            location = os.path.abspath(os.path.join(os.environ.get('DR_DIR'),'worker-{}.env'.format(i)))
             with open(location, 'r') as fh:
                 vars_dict = dict(
                     tuple(line.split('='))
@@ -158,15 +157,6 @@ if config['MULTI_CONFIG'] == "True":
                 config.update({'NUMBER_OF_BOT_CARS': '0'})
                 config.update({'NUMBER_OF_OBSTACLES': '0'})
 
-            multiconfigpath = os.path.abspath(os.path.join(os.environ.get('DR_DIR'),'tmp', '{}-multiconfig.txt'.format(os.environ.get('DR_RUN_ID'))))
-
-            # Write World Names to file for environment export later in start.sh
-            f = open(multiconfigpath, "a")
-            L = os.environ.get('DR_WORLD_NAME')
-            f.write("\n")
-            f.write("export DR_MT_WORLD_NAME_%d=%s" % (i,L))
-            f.close()
-
             #split string s3_yaml_name, insert the worker number, and add back on the .yaml extension
             s3_yaml_name_list = s3_yaml_name.split('.')
             s3_yaml_name_temp = s3_yaml_name_list[0] + "_%d.yaml" % i
@@ -178,3 +168,8 @@ if config['MULTI_CONFIG'] == "True":
                 yaml.dump(config, yaml_file, default_flow_style=False, default_style='\'', explicit_start=True)
             s3_client.upload_file(Bucket=s3_bucket, Key=yaml_key, Filename=local_yaml_path)
 
+            # Store in multi_config array
+            multi_config['multi_config'][i - 1] = {'config_file': s3_yaml_name_temp,
+                                                             'world_name': config['WORLD_NAME']}
+
+    print(multi_config)

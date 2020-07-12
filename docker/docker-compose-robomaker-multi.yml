@@ -2,5 +2,7 @@ version: '3.7'
 
 services:
   robomaker:
+    environment:
+      - MULTI_CONFIG
     volumes:
       - "${DR_DIR}/tmp/comms.${DR_RUN_ID}:/mnt/comms"
