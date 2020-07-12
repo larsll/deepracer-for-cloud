@@ -19,3 +19,7 @@ Note; Sagemaker will stop collecting experiences once you have reached 10.000 st
 ## Training with different parameters for each worker
 
 It is also possible to use different configurations between workers, such as different tracks (WORLD_NAME).  To enable, set DR_MULTI_CONFIG=True inside run.env, then make copies of run.env in the format worker2-run.env, worker3-run.env, etc.   Modify the worker<#>-run.env file with your desired changes.  These files are only used if you are training with multiple workers.
+
+## Watching the streams
+
+If you want to watch the streams -- and are in `compose` mode you can use the script `utils/start-local-browser.sh` to dynamically create a HTML that streams the KVS stream from ALL workers at a time.
