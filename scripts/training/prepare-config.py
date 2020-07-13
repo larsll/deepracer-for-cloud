@@ -172,4 +172,4 @@ if config['MULTI_CONFIG'] == "True":
             multi_config['multi_config'][i - 1] = {'config_file': s3_yaml_name_temp,
                                                              'world_name': config['WORLD_NAME']}
 
-    print(multi_config)
+    print(json.dumps(multi_config))
