@@ -85,7 +85,6 @@ local_yaml_path = os.path.abspath(os.path.join(os.environ.get('DR_DIR'),'tmp', '
 with open(local_yaml_path, 'w') as yaml_file:
     yaml.dump(config, yaml_file, default_flow_style=False, default_style='\'', explicit_start=True)
 
-s3_client.upload_file(Bucket=s3_bucket, Key=yaml_key, Filename=local_yaml_path)
 
 
 # Training with different configurations on each worker (aka Multi Config training)
@@ -173,3 +172,6 @@ if config['MULTI_CONFIG'] == "True":
                                                              'world_name': config['WORLD_NAME']}
 
     print(json.dumps(multi_config))
+
+else:
+    s3_client.upload_file(Bucket=s3_bucket, Key=yaml_key, Filename=local_yaml_path)
