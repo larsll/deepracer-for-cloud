@@ -49,8 +49,6 @@ if config['RACE_TYPE'] == 'OBJECT_AVOIDANCE':
     config['NUMBER_OF_OBSTACLES'] = os.environ.get('DR_OA_NUMBER_OF_OBSTACLES', '6')
     config['MIN_DISTANCE_BETWEEN_OBSTACLES'] = os.environ.get('DR_OA_MIN_DISTANCE_BETWEEN_OBSTACLES', '2.0')
     config['RANDOMIZE_OBSTACLE_LOCATIONS'] = os.environ.get('DR_OA_RANDOMIZE_OBSTACLE_LOCATIONS', 'True')
-    config['PSEUDO_RANDOMIZE_OBSTACLE_LOCATIONS'] = os.environ.get('DR_OA_PSEUDO_RANDOMIZE_OBSTACLE_LOCATIONS', 'False')
-    config['NUMBER_OF_PSEUDO_RANDOM_PLACEMENTS'] = os.environ.get('DR_OA_NUMBER_OF_PSEUDO_RANDOM_PLACEMENTS', '2')
     config['IS_OBSTACLE_BOT_CAR'] = os.environ.get('DR_OA_IS_OBSTACLE_BOT_CAR', 'false')
 
 # Head to Bot
@@ -134,8 +132,6 @@ if config['MULTI_CONFIG'] == "True":
                 config.update({'NUMBER_OF_OBSTACLES': os.environ.get('DR_OA_NUMBER_OF_OBSTACLES')})
                 config.update({'MIN_DISTANCE_BETWEEN_OBSTACLES': os.environ.get('DR_OA_MIN_DISTANCE_BETWEEN_OBSTACLES')})
                 config.update({'RANDOMIZE_OBSTACLE_LOCATIONS': os.environ.get('DR_OA_RANDOMIZE_OBSTACLE_LOCATIONS')})
-                config.update({'PSEUDO_RANDOMIZE_OBSTACLE_LOCATIONS': os.environ.get('DR_OA_PSEUDO_RANDOMIZE_OBSTACLE_LOCATIONS')})
-                config.update({'NUMBER_OF_PSEUDO_RANDOM_PLACEMENTS': os.environ.get('DR_OA_NUMBER_OF_PSEUDO_RANDOM_PLACEMENTS')})
                 config.update({'IS_OBSTACLE_BOT_CAR': os.environ.get('DR_OA_IS_OBSTACLE_BOT_CAR')})
                 config.update({'NUMBER_OF_BOT_CARS': '0'})
 
