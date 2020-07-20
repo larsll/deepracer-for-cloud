@@ -122,6 +122,7 @@ if config['MULTI_CONFIG'] == "True":
             # Update car and training parameters
             config.update({'WORLD_NAME': os.environ.get('DR_WORLD_NAME')})
             config.update({'RACE_TYPE': os.environ.get('DR_RACE_TYPE')})
+            config.update({'CAR_COLOR': os.environ.get('DR_CAR_COLOR')})
             config.update({'ALTERNATE_DRIVING_DIRECTION': os.environ.get('DR_TRAIN_ALTERNATE_DRIVING_DIRECTION')})
             config.update({'CHANGE_START_POSITION': os.environ.get('DR_TRAIN_CHANGE_START_POSITION')})
             config.update({'ROUND_ROBIN_ADVANCE_DIST': os.environ.get('DR_TRAIN_ROUND_ROBIN_ADVANCE_DIST')})
