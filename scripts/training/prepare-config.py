@@ -134,7 +134,6 @@ if config['MULTI_CONFIG'] == "True":
                 config.update({'MIN_DISTANCE_BETWEEN_OBSTACLES': os.environ.get('DR_OA_MIN_DISTANCE_BETWEEN_OBSTACLES')})
                 config.update({'RANDOMIZE_OBSTACLE_LOCATIONS': os.environ.get('DR_OA_RANDOMIZE_OBSTACLE_LOCATIONS')})
                 config.update({'IS_OBSTACLE_BOT_CAR': os.environ.get('DR_OA_IS_OBSTACLE_BOT_CAR')})
-                config.update({'NUMBER_OF_BOT_CARS': '0'})
 
             # Update Head to Bot parameters
             if config['RACE_TYPE'] == 'HEAD_TO_BOT':
@@ -146,7 +145,6 @@ if config['MULTI_CONFIG'] == "True":
                 config.update({'MIN_DISTANCE_BETWEEN_BOT_CARS': os.environ.get('DR_H2B_MIN_DISTANCE_BETWEEN_BOT_CARS')})
                 config.update({'RANDOMIZE_BOT_CAR_LOCATIONS': os.environ.get('DR_H2B_RANDOMIZE_BOT_CAR_LOCATIONS')})
                 config.update({'BOT_CAR_SPEED': os.environ.get('DR_H2B_BOT_CAR_SPEED')})
-                config.update({'NUMBER_OF_OBSTACLES': '0'})
 
             # Clear bot cars and obstacles in case present from earlier worker
             if config['RACE_TYPE'] == 'TIME_TRIAL':
