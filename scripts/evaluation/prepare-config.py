@@ -62,6 +62,13 @@ if config['RACE_TYPE'] == 'OBJECT_AVOIDANCE':
     config['RANDOMIZE_OBSTACLE_LOCATIONS'] = os.environ.get('DR_OA_RANDOMIZE_OBSTACLE_LOCATIONS', 'True')
     config['IS_OBSTACLE_BOT_CAR'] = os.environ.get('DR_OA_IS_OBSTACLE_BOT_CAR', 'false')
 
+    object_position_str = os.environ.get('DR_OA_OBJECT_POSITIONS', "")
+    if object_position_str != "":
+        object_positions = []
+        for o in object_position_str.split(";"):
+            object_positions.append(o)
+        config['OBJECT_POSITIONS'] = object_positions
+
 # Head to Bot
 if config['RACE_TYPE'] == 'HEAD_TO_BOT':
     config['IS_LANE_CHANGE'] = os.environ.get('DR_H2B_IS_LANE_CHANGE', 'False')
