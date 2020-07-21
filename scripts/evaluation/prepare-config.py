@@ -68,6 +68,7 @@ if config['RACE_TYPE'] == 'OBJECT_AVOIDANCE':
         for o in object_position_str.split(";"):
             object_positions.append(o)
         config['OBJECT_POSITIONS'] = object_positions
+        config['NUMBER_OF_OBSTACLES'] = str(len(object_positions))
 
 # Head to Bot
 if config['RACE_TYPE'] == 'HEAD_TO_BOT':

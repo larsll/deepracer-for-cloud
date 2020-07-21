@@ -57,6 +57,7 @@ if config['RACE_TYPE'] == 'OBJECT_AVOIDANCE':
         for o in object_position_str.split(";"):
             object_positions.append(o)
         config['OBJECT_POSITIONS'] = object_positions
+        config['NUMBER_OF_OBSTACLES'] = str(len(object_positions))
 
 # Head to Bot
 if config['RACE_TYPE'] == 'HEAD_TO_BOT':
@@ -147,8 +148,9 @@ if config['MULTI_CONFIG'] == "True":
                     for o in object_position_str.replace('"','').split(";"):
                         object_positions.append(o)
                     config.update({'OBJECT_POSITIONS': object_positions})
+                    config.update({'NUMBER_OF_OBSTACLES': str(len(object_positions))})
                 else:
-                    config.update({'OBJECT_POSITIONS': None})
+                    config.pop('OBJECT_POSITIONS')
 
             # Update Head to Bot parameters
             if config['RACE_TYPE'] == 'HEAD_TO_BOT':
