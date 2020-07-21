@@ -35,7 +35,6 @@ config['CAR_COLOR'] = os.environ.get('DR_CAR_COLOR', 'Red')
 config['CAR_NAME'] = os.environ.get('DR_CAR_NAME', 'MyCar')
 config['RACE_TYPE'] = os.environ.get('DR_RACE_TYPE', 'TIME_TRIAL')
 config['WORLD_NAME'] = os.environ.get('DR_WORLD_NAME', 'LGSWide')
-config['NUMBER_OF_TRIALS'] = os.environ.get('DR_EVAL_NUMBER_OF_TRIALS', '5')
 config['DISPLAY_NAME'] = os.environ.get('DR_DISPLAY_NAME', 'racer1')
 config['RACER_NAME'] = os.environ.get('DR_RACER_NAME', 'racer1')
 
@@ -43,6 +42,7 @@ config['ALTERNATE_DRIVING_DIRECTION'] = os.environ.get('DR_TRAIN_ALTERNATE_DRIVI
 config['CHANGE_START_POSITION'] = os.environ.get('DR_TRAIN_CHANGE_START_POSITION', os.environ.get('DR_CHANGE_START_POSITION', 'true'))
 config['ROUND_ROBIN_ADVANCE_DIST'] = os.environ.get('DR_TRAIN_ROUND_ROBIN_ADVANCE_DIST', '0.05')
 config['ENABLE_DOMAIN_RANDOMIZATION'] = os.environ.get('DR_ENABLE_DOMAIN_RANDOMIZATION', 'false')
+config['MIN_EVAL_TRIALS'] = os.environ.get('DR_TRAIN_MIN_EVAL_TRIALS', '5')
 
 # Object Avoidance
 if config['RACE_TYPE'] == 'OBJECT_AVOIDANCE':
