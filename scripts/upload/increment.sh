@@ -66,7 +66,7 @@ then
             exit 1
         fi
     fi
-    sed -i.bak -re "s/(DR_LOCAL_S3_MODEL_PREFIX=).*$/\1$NEW_UPLOAD_MODEL/g" "$CONFIG_FILE" && echo "Done."
+    sed -i.bak -re "s/(DR_UPLOAD_S3_PREFIX=).*$/\1$NEW_UPLOAD_MODEL/g" "$CONFIG_FILE" && echo "Done."
 else
     echo    "Error in determining new model. Aborting."
     exit 1
