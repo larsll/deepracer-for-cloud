@@ -36,7 +36,6 @@ config['OFF_TRACK_PENALTY'] = os.environ.get('DR_EVAL_OFF_TRACK_PENALTY', '5.0')
 tournament_config = os.environ.get('DR_LOCAL_S3_TOURNAMENT_JSON_FILE', 'tournament.json')
 print("Reading in tournament file {}".format(tournament_config))
 
-config['CAR_COLOR'] = []
 config['RACER_NAME'] = []
 config['DISPLAY_NAME'] = []
 config['MODEL_S3_PREFIX'] = []
@@ -53,13 +52,12 @@ config['MODEL_METADATA_FILE_S3_KEY'] = []
 with open(tournament_config) as tournament_config_json:
     tournament_config_data = json.load(tournament_config_json)
     for r in tournament_config_data['racers']:
-        config['CAR_COLOR'].append(r['car_color'])
         config['RACER_NAME'].append(r['racer_name'])
         config['DISPLAY_NAME'].append(r['racer_name'])
         config['MODEL_S3_PREFIX'].append(r['s3_prefix'])
         config['MODEL_S3_BUCKET'].append(r['s3_bucket'])
         config['MODEL_METADATA_FILE_S3_KEY'].append("{}/model/model_metadata.json".format(r['s3_prefix']))
-        config['KINESIS_VIDEO_STREAM_NAME'].append(r['kinesis_stream'])
+        config['KINESIS_VIDEO_STREAM_NAME'].append("None")
         config['SIMTRACE_S3_BUCKET'].append(tournament_s3_bucket)
         config['SIMTRACE_S3_PREFIX'].append("{}/{}/simtrace/".format(tournament_s3_prefix, r['racer_name']))
         config['MP4_S3_BUCKET'].append(tournament_s3_bucket)
