@@ -29,3 +29,6 @@ else
     export ROBOMAKER_COMMAND=""
     docker-compose $COMPOSE_FILES -p $STACK_NAME --log-level ERROR down
 fi
+
+#Stop viewer if available
+docker rm -f deepracer-$DR_RUN_ID-viewer || true
