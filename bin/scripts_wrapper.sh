@@ -19,8 +19,8 @@ function dr-upload-model {
   dr-update-env && ${DIR}/scripts/upload/upload-model.sh "$@"
 }
 
-function dr-car-upload {
-  dr-update-env && ${DIR}/scripts/upload/car-upload.sh "$@"
+function dr-upload-car-zip {
+  dr-update-env && ${DIR}/scripts/upload/upload-car.sh "$@"
 }
 
 function dr-list-aws-models {
