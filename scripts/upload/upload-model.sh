@@ -74,7 +74,7 @@ WORK_DIR=${DR_DIR}/tmp/upload/
 mkdir -p ${WORK_DIR} && rm -rf ${WORK_DIR} && mkdir -p ${WORK_DIR}model ${WORK_DIR}ip
 
 # Download information on model.
-TARGET_REWARD_FILE_S3_KEY="s3://${TARGET_S3_BUCKET}/${TARGET_S3_PREFIX}/model/reward_function.py"
+TARGET_REWARD_FILE_S3_KEY="s3://${TARGET_S3_BUCKET}/${TARGET_S3_PREFIX}/reward_function.py"
 TARGET_HYPERPARAM_FILE_S3_KEY="s3://${TARGET_S3_BUCKET}/${TARGET_S3_PREFIX}/ip/hyperparameters.json"
 
 # Check if metadata-files are available
