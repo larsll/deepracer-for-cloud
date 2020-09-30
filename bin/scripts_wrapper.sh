@@ -19,6 +19,10 @@ function dr-upload-model {
   dr-update-env && ${DIR}/scripts/upload/upload-model.sh "$@"
 }
 
+function dr-upload-car-zip {
+  dr-update-env && ${DIR}/scripts/upload/upload-car.sh "$@"
+}
+
 function dr-list-aws-models {
   echo "Due to changes in AWS DeepRacer Console this command is no longer available."
 }
@@ -96,11 +100,14 @@ function dr-stop-loganalysis {
 function dr-logs-sagemaker {
 
   local OPTIND
+  OPT_TIME="--since 5m"
 
   while getopts ":w:" opt; do
   case $opt in
   w) OPT_WAIT=$OPTARG
   ;;
+  a) OPT_TIME=""
+  ;;  
   \?) echo "Invalid option -$OPTARG" >&2
   ;;
   esac
@@ -133,18 +140,18 @@ function dr-logs-sagemaker {
   then
     if [ -x "$(command -v gnome-terminal)" ]; 
     then
-      gnome-terminal --tab --title "DR-${DR_RUN_ID}: Sagemaker - ${SAGEMAKER_CONTAINER}" -- /usr/bin/bash -c "!!; docker logs -f ${SAGEMAKER_CONTAINER}" 2> /dev/null
+      gnome-terminal --tab --title "DR-${DR_RUN_ID}: Sagemaker - ${SAGEMAKER_CONTAINER}" -- /usr/bin/bash -c "docker logs $OPT_TIME -f ${SAGEMAKER_CONTAINER}" 2> /dev/null
       echo "Sagemaker container $SAGEMAKER_CONTAINER logs opened in separate gnome-terminal. "
     elif [ -x "$(command -v x-terminal-emulator)" ]; 
     then
-      x-terminal-emulator -e /bin/sh -c "!!; docker logs -f ${SAGEMAKER_CONTAINER}" 2> /dev/null
+      x-terminal-emulator -e /bin/sh -c "docker logs $OPT_TIME -f ${SAGEMAKER_CONTAINER}" 2> /dev/null
       echo "Sagemaker container $SAGEMAKER_CONTAINER logs opened in separate terminal. "      
     else
       echo 'Could not find a defined x-terminal-emulator. Displaying inline.'
-      docker logs -f $SAGEMAKER_CONTAINER
+      docker logs $OPT_TIME -f $SAGEMAKER_CONTAINER
     fi
   else
-      docker logs -f $SAGEMAKER_CONTAINER
+      docker logs $OPT_TIME -f $SAGEMAKER_CONTAINER
   fi
 
 }
@@ -176,8 +183,9 @@ function dr-logs-robomaker {
 
   OPT_REPLICA=1
   local OPTIND
+  OPT_TIME="--since 5m"
 
-  while getopts ":w:n:e" opt; do
+  while getopts ":w:n:ea" opt; do
   case $opt in
   w) OPT_WAIT=$OPTARG
   ;;
@@ -185,6 +193,8 @@ function dr-logs-robomaker {
   ;;
   e) OPT_EVAL="-e"
   ;;  
+  a) OPT_TIME=""
+  ;;
   \?) echo "Invalid option -$OPTARG" >&2
   ;;
   esac
@@ -217,18 +227,18 @@ function dr-logs-robomaker {
   then
     if [ -x "$(command -v gnome-terminal)" ]; 
     then
-      gnome-terminal --tab --title "DR-${DR_RUN_ID}: Robomaker #${OPT_REPLICA} - ${ROBOMAKER_CONTAINER}" -- /usr/bin/bash -c "!!; docker logs -f ${ROBOMAKER_CONTAINER}" 2> /dev/null
+      gnome-terminal --tab --title "DR-${DR_RUN_ID}: Robomaker #${OPT_REPLICA} - ${ROBOMAKER_CONTAINER}" -- /usr/bin/bash -c "docker logs $OPT_TIME -f ${ROBOMAKER_CONTAINER}" 2> /dev/null
       echo "Robomaker #${OPT_REPLICA} ($ROBOMAKER_CONTAINER) logs opened in separate gnome-terminal. "
     elif [ -x "$(command -v x-terminal-emulator)" ]; 
     then
-      x-terminal-emulator -e /bin/sh -c "!!; docker logs -f ${ROBOMAKER_CONTAINER}" 2> /dev/null
+      x-terminal-emulator -e /bin/sh -c "docker logs $OPT_TIME -f ${ROBOMAKER_CONTAINER}" 2> /dev/null
       echo "Robomaker #${OPT_REPLICA} ($ROBOMAKER_CONTAINER) logs opened in separate terminal. "
     else
       echo 'Could not find a defined x-terminal-emulator. Displaying inline.'
-      docker logs -f $ROBOMAKER_CONTAINER
+      docker logs $OPT_TIME -f $ROBOMAKER_CONTAINER 
     fi
   else
-      docker logs -f $ROBOMAKER_CONTAINER
+      docker logs $OPT_TIME -f $ROBOMAKER_CONTAINER
   fi
 
 }
@@ -304,3 +314,12 @@ function dr-view-stream {
   ${DIR}/utils/start-local-browser.sh "$@"
 }
 
+function dr-start-viewer {
+  dr-update-env
+  $DIR/scripts/viewer/start.sh "$@"
+}
+
+function dr-stop-viewer {
+  dr-update-env
+  $DIR/scripts/viewer/stop.sh "$@"
+}

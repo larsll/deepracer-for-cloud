@@ -24,23 +24,27 @@ Depending on your needs as well as specific needs of the cloud platform you can 
 
 **Local**:
 * A modern, comparatively powerful, Intel based system.
-	* Ubuntu 18.04 or 20.04 - Windows not supported, other Linux-dristros likely to work.
+	* Ubuntu 18.04 or 20.04, other Linux-dristros likely to work.
 	* 4 core-CPU, equivalent to 8 vCPUs; the more the better.
 	* NVIDIA Graphics adapter with minimum 8 GB RAM for Sagemaker to run GPU. Robomaker enabled GPU instances need ~1 GB each.
 	* System RAM + GPU RAM should be at least 32 GB.
+* Running DRfC Ubuntu 20.04 on Windows using Windows Subsystem for Linux 2 is possible. See [Installing on Windows](windows.md)
 
 ## Installation
 
 The package comes with preparation and setup scripts that would allow a turn-key setup for a fresh virtual machine.
 
 	git clone https://github.com/larsll/deepracer-for-cloud.git
+	
+**For cloud setup** execute:
+	
 	cd deepracer-for-cloud && ./bin/prepare.sh
 	
 This will prepare the VM by partitioning additional drives as well as installing all prerequisites. After a reboot it will continuee to run `./bin/init.sh` setting up the full repository and downloading the core Docker images. Depending on your environment this may take up to 30 minutes. The scripts will create a file `DONE` once completed.
 
 The installation script will adapt `.profile` to ensure that all settings are applied on login. Otherwise run the activation with `source bin/activate.sh`.
 
-For local install it is recommended *not* to run the `bin/prepare.sh` script; it might do more changes than what you want. Rather ensure that all prerequisites are set up and run `bin/init.sh` directly.
+**For local install** it is recommended *not* to run the `bin/prepare.sh` script; it might do more changes than what you want. Rather ensure that all prerequisites are set up and run `bin/init.sh` directly.
 
 The Init Script takes a few parameters:
 
@@ -74,6 +78,7 @@ To use IAM Roles:
 * Configure `run.env` as follows:
   * `DR_LOCAL_S3_PROFILE=default`
   * `DR_LOCAL_S3_BUCKET=<bucketname>`
+* Configure `system.env` as follows:
   * `DR_UPLOAD_S3_PROFILE=default`
   * `DR_UPLOAD_S3_BUCKET=<your-aws-deepracer-bucket>`
 * Run `dr-update` for configuration to take effect.
@@ -87,6 +92,7 @@ For access with IAM user:
 * Configure `run.env` as follows:
   * `DR_LOCAL_S3_PROFILE=default`
   * `DR_LOCAL_S3_BUCKET=<bucketname>`
+* Configure `system.env` as follows:
   * `DR_UPLOAD_S3_PROFILE=default`
   * `DR_UPLOAD_S3_BUCKET=<your-aws-deepracer-bucket>`
 * Run `dr-update` for configuration to take effect.
@@ -104,6 +110,7 @@ In Azure mode the script-set requires the following:
 * Configure `run.env` as follows:
   * `DR_LOCAL_S3_PROFILE=<myprofile>`
   * `DR_LOCAL_S3_BUCKET=<blobcontainer-name>`
+* Configure `system.env` as follows:
   * `DR_UPLOAD_S3_PROFILE=default`
   * `DR_UPLOAD_S3_BUCKET=<your-aws-deepracer-bucket>`
 * Run `dr-update` for configuration to take effect.
@@ -122,6 +129,7 @@ In Local mode the script-set requires the following:
 * Configure `run.env` as follows:
   * `DR_LOCAL_S3_PROFILE=minio`
   * `DR_LOCAL_S3_BUCKET=bucket`
+* Configure `system.env` as follows:
   * `DR_UPLOAD_S3_PROFILE=default`
   * `DR_UPLOAD_S3_BUCKET=<your-aws-deepracer-bucket>`
 * Run `dr-update` for configuration to take effect.

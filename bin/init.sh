@@ -34,10 +34,7 @@ if [[ -z "$OPT_CLOUD" ]]; then
 fi
 
 # Find CPU Level
-CPU_LEVEL="cpu"
-if [[ "$(dmesg | grep AVX | wc -l)" > 0 ]]; then 
-    CPU_LEVEL="cpu-avx"
-fi
+CPU_LEVEL="cpu-avx"
 
 if [[ "$(dmesg | grep AVX2 | wc -l)" > 0 ]]; then 
     CPU_LEVEL="cpu-avx2"
@@ -60,7 +57,7 @@ then
     if [ $? -ne 0 ] || [ $GPUS -eq 0 ]
     then
         echo "No GPU detected in docker. Using CPU".
-        OPT_ARCH="cpu"
+        OPT_ARCH="cpu-avx"
     fi
 fi
 
@@ -158,6 +155,9 @@ docker network ls | grep -q $SAGEMAKER_NW
 if [ $? -ne 0 ]
 then
     docker network create $SAGEMAKER_NW -d overlay --attachable --scope swarm
+else
+    docker network rm $SAGEMAKER_NW
+    docker network create $SAGEMAKER_NW -d overlay --attachable --scope swarm
 fi
 
 # ensure our variables are set on startup
@@ -180,9 +180,9 @@ then
     #get bucket name
     TRAINING_BUCKET=${TRAINING_LOC%%/*}
     #get prefix. minor exception handling in case there is no prefix and a root bucket is passed
-    if [[ "$TRAININGLOC" == *"/"* ]]
+    if [[ "$TRAINING_LOC" == *"/"* ]]
     then
-      TRAINING_PREFIX=${TRAININGLOC#*/}
+      TRAINING_PREFIX=${TRAINING_LOC#*/}
     else
       TRAINING_PREFIX=""
     fi
