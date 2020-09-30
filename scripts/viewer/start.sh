@@ -42,10 +42,10 @@ usage
 esac
 done
 
-FILE=$DR_DIR/tmp/streams-$DR_RUN_ID.html
-NGINX=$DR_DIR/tmp/streams-$DR_RUN_ID.conf
+export DR_VIEWER_HTML=$DR_DIR/tmp/streams-$DR_RUN_ID.html
+export DR_NGINX_CONF=$DR_DIR/tmp/streams-$DR_RUN_ID.conf
 
-cat << EOF > $NGINX
+cat << EOF > $DR_NGINX_CONF
 server {
   listen 80;
   location / {
@@ -53,7 +53,7 @@ server {
     index  index.html index.htm;
   }
 EOF
-echo "<html><head><title>DR-$DR_RUN_ID - $DR_LOCAL_S3_MODEL_PREFIX - $TOPIC</title></head><body><h1>DR-$DR_RUN_ID - $DR_LOCAL_S3_MODEL_PREFIX - $TOPIC</h1>" > $FILE
+echo "<html><head><title>DR-$DR_RUN_ID - $DR_LOCAL_S3_MODEL_PREFIX - $TOPIC</title></head><body><h1>DR-$DR_RUN_ID - $DR_LOCAL_S3_MODEL_PREFIX - $TOPIC</h1>" > $DR_VIEWER_HTML
 
 ROBOMAKER_CONTAINERS=$(docker ps --format "{{.ID}}" --filter name=deepracer-$DR_RUN_ID --filter "ancestor=awsdeepracercommunity/deepracer-robomaker:$DR_ROBOMAKER_IMAGE")
 if [ -z "$ROBOMAKER_CONTAINERS" ]; then
@@ -64,19 +64,27 @@ fi
 for c in $ROBOMAKER_CONTAINERS; do
     C_URL="/$c/stream?topic=${TOPIC}&quality=${QUALITY}&width=${WIDTH}&height=${HEIGHT}"
     C_IMG="<img src=\"${C_URL}\"></img>"
-    echo $C_IMG >> $FILE
-    echo "  location /$c { proxy_pass http://$c:8080; rewrite /$c/(.*) /\$1 break; }" >> $NGINX
+    echo $C_IMG >> $DR_VIEWER_HTML
+    echo "  location /$c { proxy_pass http://$c:8080; rewrite /$c/(.*) /\$1 break; }" >> $DR_NGINX_CONF
 done
 
-echo "</body></html>" >> $FILE
-echo "}" >> $NGINX
-docker rm -f deepracer-$DR_RUN_ID-viewer
-docker run -d \
-  -p 8081:80 \
-  --network sagemaker-local \
-  --name deepracer-$DR_RUN_ID-viewer \
-  -v $FILE/:/usr/share/nginx/html/index.html \
-  -v $NGINX:/etc/nginx/conf.d/default.conf \
-  nginx
-echo "Starting browser '$BROWSER'."
-$BROWSER "http://127.0.01:8081" &
+echo "</body></html>" >> $DR_VIEWER_HTML
+echo "}" >> $DR_NGINX_CONF
+
+# Check if we will use Docker Swarm or Docker Compose
+STACK_NAME="deepracer-$DR_RUN_ID-viewer"
+COMPOSE_FILES=$DR_DIR/docker/docker-compose-webviewer.yml
+
+if [[ "${DR_DOCKER_STYLE,,}" == "swarm" ]];
+then
+  docker stack deploy $COMPOSE_FILES $STACK_NAME
+else
+  docker-compose -f $COMPOSE_FILES -p $STACK_NAME --log-level ERROR up -d 
+fi
+
+# Starting browser if using local X and having display defined.
+if [[ -n "${DISPLAY}" && "${DR_HOST_X,,}" == "true" ]]; then
+  echo "Starting browser '$BROWSER'."
+  $BROWSER "http://127.0.01:8100" &
+fi
+
