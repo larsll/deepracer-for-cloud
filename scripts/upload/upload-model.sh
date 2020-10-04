@@ -80,7 +80,7 @@ TARGET_HYPERPARAM_FILE_S3_KEY="s3://${TARGET_S3_BUCKET}/${TARGET_S3_PREFIX}/ip/h
 # Check if metadata-files are available
 REWARD_IN_ROOT=$(aws $DR_LOCAL_PROFILE_ENDPOINT_URL s3 ls s3://${SOURCE_S3_BUCKET}/${SOURCE_S3_MODEL_PREFIX}/reward_function.py)
 
-if [ -z $REWARD_IN_ROOT ]
+if [ -z "$REWARD_IN_ROOT" ];
 then
     REWARD_FILE=$(aws $DR_LOCAL_PROFILE_ENDPOINT_URL s3 cp s3://${SOURCE_S3_BUCKET}/${SOURCE_S3_MODEL_PREFIX}/reward_function.py ${WORK_DIR} --no-progress | awk '/reward/ {print $4}'| xargs readlink -f 2> /dev/null)
 else
