@@ -97,7 +97,7 @@ cd ${WORK_DIR}
 aws ${DR_UPLOAD_PROFILE} s3 sync ${SOURCE_S3_URL} ${WORK_DIR}/full/ ${OPT_DRYRUN}
 aws ${DR_LOCAL_PROFILE_ENDPOINT_URL} s3 sync ${WORK_DIR}/full/ s3://${TARGET_S3_BUCKET}/${TARGET_S3_PREFIX}/ ${OPT_DRYRUN} ${OPT_WIPE}
 
-if [[ -n "${OPT_CONFIG}"]];
+if [[ -n "${OPT_CONFIG}" ]];
 then
   echo "Copy configuration to custom_files"
   cp ${WORK_DIR}/config/* ${DR_DIR}/custom_files/
