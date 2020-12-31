@@ -29,7 +29,6 @@ config['MP4_S3_OBJECT_PREFIX'] = []
 # Basic configuration; including all buckets etc.
 config['AWS_REGION'] = os.environ.get('DR_AWS_APP_REGION', 'us-east-1')
 config['JOB_TYPE'] = 'EVALUATION'
-config['VIDEO_JOB_TYPE'] = 'EVALUATION'
 config['KINESIS_VIDEO_STREAM_NAME'] = os.environ.get('DR_KINESIS_STREAM_NAME', 'my-kinesis-stream')
 config['ROBOMAKER_SIMULATION_JOB_ACCOUNT_ID'] = os.environ.get('', 'Dummy')
 
@@ -126,7 +125,7 @@ if config['RACE_TYPE'] == 'HEAD_TO_MODEL':
 
     body_shell_type = os.environ.get('DR_EVAL_OPP_CAR_BODY_SHELL_TYPE', 'deepracer')
     config['BODY_SHELL_TYPE'].append(body_shell_type)
-
+    config['VIDEO_JOB_TYPE'] = 'EVALUATION'
     config['CAR_COLOR'] = ['Purple', 'Orange']    
     config['MODEL_NAME'] = config['DISPLAY_NAME']
 
