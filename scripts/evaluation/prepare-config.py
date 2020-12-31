@@ -104,7 +104,7 @@ if config['RACE_TYPE'] == 'HEAD_TO_MODEL':
     config['MODEL_S3_PREFIX'].append(os.environ.get('DR_EVAL_OPP_S3_MODEL_PREFIX', 'rl-deepracer-sagemaker'))
     config['MODEL_S3_BUCKET'].append(os.environ.get('DR_LOCAL_S3_BUCKET', 'bucket'))
     config['SIMTRACE_S3_BUCKET'].append(os.environ.get('DR_LOCAL_S3_BUCKET', 'bucket'))
-    config['SIMTRACE_S3_PREFIX'].append(os.environ.get('DR_EVAL_OPP_MODEL_PREFIX', 'rl-deepracer-sagemaker'))
+    config['SIMTRACE_S3_PREFIX'].append(os.environ.get('DR_EVAL_OPP_S3_MODEL_PREFIX', 'rl-deepracer-sagemaker'))
 
     # Metrics
     config['METRICS_S3_BUCKET'].append(os.environ.get('DR_LOCAL_S3_BUCKET', 'bucket'))
@@ -118,16 +118,17 @@ if config['RACE_TYPE'] == 'HEAD_TO_MODEL':
     save_mp4 = str2bool(os.environ.get("DR_EVAL_SAVE_MP4", "False"))
     if save_mp4:
         config['MP4_S3_BUCKET'].append(os.environ.get('DR_LOCAL_S3_BUCKET', 'bucket'))
-        config['MP4_S3_OBJECT_PREFIX'].append('{}/{}'.format(os.environ.get('DR_EVAL_OPP_S3_BUCKET', 'bucket'),'mp4'))
+        config['MP4_S3_OBJECT_PREFIX'].append('{}/{}'.format(os.environ.get('DR_EVAL_OPP_MODEL_PREFIX', 'bucket'),'mp4'))
 
     # Car and training 
-    body_shell_type = os.environ.get('DR_EVAL_OPP_CAR_BODY_SHELL_TYPE', 'deepracer')
-    config['BODY_SHELL_TYPE'].append(body_shell_type)
-    if body_shell_type == 'deepracer':
-        config['CAR_COLOR'].append(os.environ.get('DR_EVAL_OPP_CAR_COLOR', 'Blue'))
     config['DISPLAY_NAME'].append(os.environ.get('DR_EVAL_OPP_DISPLAY_NAME', 'racer1'))
     config['RACER_NAME'].append(os.environ.get('DR_EVAL_OPP_RACER_NAME', 'racer1'))
 
+    body_shell_type = os.environ.get('DR_EVAL_OPP_CAR_BODY_SHELL_TYPE', 'deepracer')
+    config['BODY_SHELL_TYPE'].append(body_shell_type)
+
+    config['CAR_COLOR'] = ['Purple', 'Orange']    
+    config['MODEL_NAME'] = config['DISPLAY_NAME']
 
 # S3 Setup / write and upload file
 s3_endpoint_url = os.environ.get('DR_LOCAL_S3_ENDPOINT_URL', None)
