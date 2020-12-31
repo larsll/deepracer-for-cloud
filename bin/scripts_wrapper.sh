@@ -1,15 +1,6 @@
 #!/bin/bash
 
 function dr-upload-custom-files {
-  if [[ "${DR_CLOUD,,}" == "azure" || "${DR_CLOUD,,}" == "local" ]];
-  then
-    if [[ "${DR_DOCKER_STYLE,,}" == "swarm" ]];
-    then
-        docker stack deploy $DR_MINIO_COMPOSE_FILE s3
-    else
-        docker-compose $DR_MINIO_COMPOSE_FILE -p s3 --log-level ERROR up -d
-    fi
-  fi
   eval CUSTOM_TARGET=$(echo s3://$DR_LOCAL_S3_BUCKET/$DR_LOCAL_S3_CUSTOM_FILES_PREFIX/)
   echo "Uploading files to $CUSTOM_TARGET"
   aws $DR_LOCAL_PROFILE_ENDPOINT_URL s3 sync $DIR/custom_files/ $CUSTOM_TARGET
@@ -40,15 +31,6 @@ function dr-increment-upload-model {
 }
 
 function dr-download-custom-files {
-  if [[ "${DR_CLOUD,,}" == "azure" || "${DR_CLOUD,,}" == "local" ]];
-  then
-    if [[ "${DR_DOCKER_STYLE,,}" == "swarm" ]];
-    then
-        docker stack deploy $DR_MINIO_COMPOSE_FILE s3
-    else
-        docker-compose $DR_MINIO_COMPOSE_FILE -p s3 --log-level ERROR up -d
-    fi
-  fi
   eval CUSTOM_TARGET=$(echo s3://$DR_LOCAL_S3_BUCKET/$DR_LOCAL_S3_CUSTOM_FILES_PREFIX/)
   echo "Downloading files from $CUSTOM_TARGET"
   aws $DR_LOCAL_PROFILE_ENDPOINT_URL s3 sync $CUSTOM_TARGET $DIR/custom_files/
@@ -182,6 +164,7 @@ function dr-find-sagemaker {
 function dr-logs-robomaker {
 
   OPT_REPLICA=1
+  OPT_EVAL=""
   local OPTIND
   OPT_TIME="--since 5m"
 
@@ -215,7 +198,7 @@ function dr-logs-robomaker {
           echo "Robomaker #${OPT_REPLICA} is not running."
           return 1
         fi
-        ROBOMAKER_CONTAINER=$(dr-find-robomaker -n ${OPT_REPLICA})
+        ROBOMAKER_CONTAINER=$(dr-find-robomaker -n ${OPT_REPLICA} ${OPT_EVAL})
       done
     else
       echo "Robomaker #${OPT_REPLICA} is not running."
@@ -263,8 +246,6 @@ function dr-find-robomaker {
   eval ROBOMAKER_ID=$(docker ps | grep "${OPT_PREFIX}-${DR_RUN_ID}_robomaker.${OPT_REPLICA}" | cut -f1 -d\  | head -1)
   if [ -n "$ROBOMAKER_ID" ]; then
     echo $ROBOMAKER_ID
-  else
-    echo "Robomaker is not running."
   fi
 }
 
