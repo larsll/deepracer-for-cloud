@@ -7,6 +7,7 @@ import pickle
 import urllib.request
 
 import boto3
+from botocore.exceptions import ClientError
 
 try:
     import pandas as pd
@@ -16,6 +17,7 @@ except ImportError:
     sys.exit(1)
 
 dr = None
+
 
 def main():
 
@@ -28,7 +30,7 @@ def main():
         )
     except getopt.GetoptError as err:
         # print help information and exit:
-        print(err)  # will print something like "option -a not recognized"
+        print(err)  # will print something like "option -x not recognized"
         usage()
         sys.exit(2)
 
@@ -40,6 +42,7 @@ def main():
     create_summary = False
     model_name = None
     leaderboard_guid = None
+    leaderboard_arn = None
 
     for opt, arg in opts:
         if opt in ("-l", "--logs"):
@@ -78,9 +81,12 @@ def main():
         print("Did not find model with name {}".format(model_name))
         sys.exit(1)
 
+    if leaderboard_guid.startswith('arn'):
+        leaderboard_arn = leaderboard_guid
 
     # Find the leaderboard
-    leaderboard_arn = find_leaderboard(leaderboard_guid)
+    if not leaderboard_arn:
+        leaderboard_arn = find_leaderboard(leaderboard_guid)
 
     if leaderboard_arn is not None:
         if verbose:
@@ -117,18 +123,23 @@ def main():
 
         if latest_submission["LeaderboardSubmissionStatusType"] == "SUCCESS":
             if download_logs:
-                download_file(
-                    "{}/{}/robomaker-{}-{}.log".format(
-                        logs_path,
-                        leaderboard_guid,
-                        latest_submission["SubmissionTime"],
-                        jobid,
-                    ),
-                    dr.get_asset_url(
+                try:
+                    f_url = dr.get_asset_url(
                         Arn=latest_submission["ActivityArn"],
                         AssetType="ROBOMAKER_CLOUDWATCH_LOG",
-                    )["Url"],
-                )
+                    )["Url"]
+                    download_file(
+                        "{}/{}/robomaker-{}-{}.log".format(
+                            logs_path,
+                            leaderboard_guid,
+                            latest_submission["SubmissionTime"],
+                            jobid,
+                        ),
+                        f_url,
+                    )
+                except ClientError:
+                    print(("WARNING: Logfile for job {} not available.").format(jobid))
+
             if download_videos:
                 download_file(
                     "{}/{}/video-{}-{}.mp4".format(
@@ -146,18 +157,25 @@ def main():
             )
             print("Submitted {} to {}.".format(model_name, leaderboard_arn))
 
-        elif latest_submission["LeaderboardSubmissionStatusType"] == "ERROR":
+        elif latest_submission["LeaderboardSubmissionStatusType"] == "ERROR" or latest_submission["LeaderboardSubmissionStatusType"] == "FAILED":
             print("Error in previous submission")
             if download_logs:
-                download_file(
-                    "{}/{}/robomaker-{}.log".format(
-                        logs_path, leaderboard_guid, latest_submission["SubmissionTime"]
-                    ),
-                    dr.get_asset_url(
+                try:
+                    f_url = dr.get_asset_url(
                         Arn=latest_submission["ActivityArn"],
                         AssetType="ROBOMAKER_CLOUDWATCH_LOG",
-                    )["Url"],
-                )
+                    )["Url"]
+                    download_file(
+                        "{}/{}/robomaker-{}-{}.log".format(
+                            logs_path,
+                            leaderboard_guid,
+                            latest_submission["SubmissionTime"],
+                            jobid,
+                        ),
+                        f_url,
+                    )
+                except ClientError:
+                    print(("WARNING: Logfile for job {} not available.").format(jobid))
 
             # Submit again
             _ = dr.create_leaderboard_submission(
@@ -190,16 +208,17 @@ def download_file(f_name, url):
         print("Downloading {}".format(os.path.basename(f_name)))
         urllib.request.urlretrieve(url, f_name)
 
+
 def find_model(model_name):
 
     m_response = dr.list_models(ModelType="REINFORCEMENT_LEARNING", MaxResults=25)
     model_dict = m_response["Models"]
     models = pd.DataFrame.from_dict(model_dict)
     my_model = models[models["ModelName"] == model_name]
-    
+
     if my_model.size > 0:
         return my_model
-    
+
     while "NextToken" in m_response:
         m_response = dr.list_models(
             ModelType="REINFORCEMENT_LEARNING",
@@ -214,6 +233,7 @@ def find_model(model_name):
             return my_model
 
     return None
+
 
 def find_leaderboard(leaderboard_guid):
     leaderboard_arn = "arn:aws:deepracer:::leaderboard/{}".format(leaderboard_guid)
@@ -235,6 +255,7 @@ def find_leaderboard(leaderboard_guid):
             return leaderboard_arn
 
     return None
+
 
 def display_submissions(submissions_dict):
     # Display status
@@ -289,7 +310,7 @@ def usage():
     print("        -l                Download robomaker logfiles.")
     print("        -g                Download video recordings.")
     print("        -m                Display name of the model to submit.")
-    print("        -b                GUID (not ARN) of the leaderboard to submit to.")
+    print("        -b                GUID or ARN of the leaderboard to submit to.")
     sys.exit(1)
 
 
